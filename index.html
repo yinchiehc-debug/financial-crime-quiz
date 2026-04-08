@@ -14,6 +14,8 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 .correct { background:#c7f9cc !important; }
 .wrong { background:#ffc9c9 !important; }
 #timer { font-weight:bold; }
+.feedback { margin-top:10px; }
+.memory { color:#2563eb; font-weight:bold; }
 </style>
 </head>
 
@@ -24,8 +26,8 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 <h1>金融犯罪防制快問快答</h1>
 
 <div class="card" id="startPage">
-<p>隨機5題（含 ABC / COI / Fraud / 檢舉）</p>
-<button onclick="startQuiz()">開始</button>
+<p>隨機5題｜看看你有沒有金融犯罪第六感 😏</p>
+<button onclick="startQuiz()">開始挑戰</button>
 </div>
 
 <div class="card" id="quizPage" style="display:none;">
@@ -36,13 +38,14 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 <p id="timer"></p>
 
 <div id="feedbackArea" style="display:none;">
-<p id="feedback"></p>
-<p id="memory"></p>
+<p class="feedback" id="feedback"></p>
+<p class="memory" id="memory"></p>
 </div>
 </div>
 
 <div class="card" id="resultPage" style="display:none;">
 <h2 id="result"></h2>
+<p id="finalComment"></p>
 <button onclick="location.reload()">再玩一次</button>
 </div>
 
@@ -50,221 +53,190 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 
 <script>
 
-// ===== 分類題庫（20題）=====
 const questionBank = [
+{cat:"ABC",q:"送禮未要求回報是否有風險？",options:["沒有","看金額","可能不當利益","只有現金"],a:2,
+memory:"重點是是否影響判斷",
+roast:"你是不是差點把賄賂當成精緻人情？"},
 
-{cat:"ABC",q:"送高價禮盒但未明講回報是否有風險？",
-options:["沒有","看金額","可能不當利益","只有現金才算"],
-a:2,memory:"是否影響判斷最重要",
-roast:"你差點把賄賂當禮盒文化"},
+{cat:"COI",q:"親友公司投標要揭露嗎？",options:["不用","看情況","需要","不用理"],a:2,
+memory:"有關係就要揭露",
+roast:"『只是認識』通常就是風險的起點"},
 
-{cat:"COI",q:"親友公司參與招標需要揭露嗎？",
-options:["不用","看情況","需要","不用理"],
-a:2,memory:"可能影響就要揭露",
-roast:"只是認識通常就是風險開始"},
+{cat:"Fraud",q:"一人負責收款+對帳風險？",options:["效率高","沒問題","缺乏分工","不影響"],a:2,
+memory:"一人包辦=高風險",
+roast:"舞弊者看到這種流程會很感動"},
 
-{cat:"Fraud",q:"同一人負責收款+對帳風險？",
-options:["效率高","沒問題","缺乏職務分工","不影響"],
-a:2,memory:"一人包辦=高風險",
-roast:"舞弊者會感謝你"},
+{cat:"WB",q:"檢舉制度最重要？",options:["匿名","獎金","禁止報復","主管"],a:2,
+memory:"沒保護就沒人敢檢舉",
+roast:"這樣的制度只會長灰塵"},
 
-{cat:"WB",q:"檢舉制度最重要的是？",
-options:["匿名","獎金","禁止報復","主管支持"],
-a:2,memory:"沒有保護就沒有檢舉",
-roast:"這樣誰敢檢舉"},
+{cat:"ABC",q:"供應商招待旅遊？",options:["接受","低調","先申請","忽略"],a:2,
+memory:"招待需核准",
+roast:"旅遊結束可能換你被調查"},
 
-{cat:"ABC",q:"供應商招待旅遊應？",
-options:["接受","低調去","先申請","不用理"],
-a:2,memory:"招待需核准",
-roast:"旅遊可能變稽核案例"},
+{cat:"Fraud",q:"同事突然變有錢？",options:["成功","沒事","異常","羨慕"],a:2,
+memory:"異常需留意",
+roast:"你第一反應如果是羨慕，有點危險喔"},
 
-{cat:"Fraud",q:"同事突然變有錢代表？",
-options:["成功","沒事","可能異常","羨慕"],
-a:2,memory:"異常需注意",
-roast:"風險意識在睡覺嗎"},
-
-{cat:"COI",q:"未揭露兼職風險？",
-options:["沒事","太累","利益衝突","形象"],
-a:2,memory:"兼職需揭露",
+{cat:"COI",q:"未揭露兼職風險？",options:["沒事","太累","利益衝突","形象"],a:2,
+memory:"兼職需揭露",
 roast:"雙重身份=雙倍風險"},
 
-{cat:"Fraud",q:"修改資料未留紀錄風險？",
-options:["沒事","效率","舞弊風險","正常"],
-a:2,memory:"需可追溯",
-roast:"沒紀錄=最危險"},
+{cat:"Fraud",q:"資料修改沒紀錄？",options:["沒事","效率","舞弊","正常"],a:2,
+memory:"需可追溯",
+roast:"沒紀錄就像沒發生（但其實發生了）"},
 
-{cat:"ABC",q:"小額禮品一定沒問題？",
-options:["是","不是","看主管","看心情"],
-a:1,memory:"金額小仍有風險",
-roast:"小額只是開始"},
+{cat:"ABC",q:"小額禮品沒問題？",options:["是","不是","看主管","看心情"],a:1,
+memory:"金額小仍可能影響",
+roast:"小額只是試水溫"},
 
-{cat:"WB",q:"發現異常應？",
-options:["忽略","等待","通報","自己查"],
-a:2,memory:"通報最重要",
-roast:"問題不會自己消失"},
+{cat:"WB",q:"發現異常應？",options:["忽略","等","通報","自己查"],a:2,
+memory:"通報最重要",
+roast:"問題不會自己消失，只會變大"},
 
-{cat:"Fraud",q:"長期不休假可能？",
-options:["努力","正常","潛在風險","好員工"],
-a:2,memory:"強制休假可揭露風險",
-roast:"太完美反而可疑"},
+{cat:"Fraud",q:"長期不休假？",options:["努力","正常","潛在風險","好員工"],a:2,
+memory:"強制休假可揭露風險",
+roast:"太完美反而要小心"},
 
-{cat:"COI",q:"主管要求跳流程應？",
-options:["照做","拒絕","依規定","看心情"],
-a:2,memory:"流程不能跳",
-roast:"跳流程=跳進問題"},
+{cat:"COI",q:"主管叫跳流程？",options:["照做","拒絕","依規定","看心情"],a:2,
+memory:"流程不能跳",
+roast:"跳流程=跳進風險"},
 
-{cat:"Fraud",q:"帳號共用可以嗎？",
-options:["可以","方便","不可以","沒差"],
-a:2,memory:"帳號不可共享",
-roast:"責任會消失"},
+{cat:"Fraud",q:"帳號共用？",options:["可以","方便","禁止","沒差"],a:2,
+memory:"帳號不可共用",
+roast:"責任也會一起消失"},
 
-{cat:"ABC",q:"大家都這樣做可以嗎？",
-options:["可以","看情況","不可以","主管同意"],
-a:2,memory:"文化不能凌駕規範",
-roast:"事故開場白"},
+{cat:"ABC",q:"大家都這樣？",options:["可以","看情況","不可以","主管"],a:2,
+memory:"文化不能凌駕規範",
+roast:"事故報告第一句"},
 
-{cat:"WB",q:"證據不足是否通報？",
-options:["不用","等","要","看心情"],
-a:2,memory:"通報不是定罪",
-roast:"調查不是你的工作"},
+{cat:"WB",q:"證據不足要通報？",options:["不用","等","要","看"],a:2,
+memory:"通報不是定罪",
+roast:"你不是偵探"},
 
-{cat:"Fraud",q:"異常交易應？",
-options:["忽略","等","通報","自行處理"],
-a:2,memory:"立即通報",
-roast:"拖延會放大風險"},
+{cat:"Fraud",q:"異常交易？",options:["忽略","等","通報","處理"],a:2,
+memory:"立即通報",
+roast:"拖越久越大條"},
 
-{cat:"COI",q:"與供應商關係密切？",
-options:["沒事","正常","需揭露","不用理"],
-a:2,memory:"關係需透明",
-roast:"太熟就有問題"},
+{cat:"COI",q:"與供應商太熟？",options:["沒事","正常","需揭露","忽略"],a:2,
+memory:"關係需透明",
+roast:"太熟就會出事"},
 
-{cat:"ABC",q:"接受招待不報備？",
-options:["可以","低調","不可以","沒差"],
-a:2,memory:"需事前核准",
-roast:"低調不代表沒風險"},
+{cat:"ABC",q:"招待不報備？",options:["可以","低調","不行","沒差"],a:2,
+memory:"需事前核准",
+roast:"低調不是解決方案"},
 
-{cat:"Fraud",q:"高報費用可能？",
-options:["正常","技巧","舞弊","沒差"],
-a:2,memory:"異常需查",
-roast:"數字不會騙人"},
+{cat:"Fraud",q:"高報費用？",options:["正常","技巧","舞弊","沒差"],a:2,
+memory:"異常需查",
+roast:"數字不會說謊"},
 
-{cat:"WB",q:"不通報異常後果？",
-options:["沒事","小事","風險擴大","正常"],
-a:2,memory:"不通報=風險擴大",
+{cat:"WB",q:"不通報後果？",options:["沒事","小事","風險擴大","正常"],a:2,
+memory:"不通報=放大風險",
 roast:"問題會長大"}
 ];
 
-// ===== 隨機抽5題 =====
-function getRandomQuestions(arr,n){
+// ===== 隨機5題 =====
+function getRandom(arr,n){
 return [...arr].sort(()=>Math.random()-0.5).slice(0,n);
 }
 
-let quizSet=[];
-let current=0;
-let score=0;
-let timer;
-let timeLeft=10;
-let answered=false;
+let quiz=[],i=0,score=0,timer,t=10,answered=false;
 
-// ===== 開始 =====
 function startQuiz(){
-quizSet=getRandomQuestions(questionBank,5);
-current=0; score=0;
-
+quiz=getRandom(questionBank,5);
+i=0;score=0;
 document.getElementById("startPage").style.display="none";
 document.getElementById("quizPage").style.display="block";
-
-showQuestion();
+showQ();
 }
 
-// ===== 題目 =====
-function showQuestion(){
+function showQ(){
 answered=false;
-let q=quizSet[current];
-
-document.getElementById("qNo").innerText=`第 ${current+1}/5題`;
-document.getElementById("category").innerText=`分類：${q.cat}`;
+let q=quiz[i];
+document.getElementById("qNo").innerText=`第 ${i+1}/5題`;
+document.getElementById("category").innerText=q.cat;
 document.getElementById("question").innerText=q.q;
 
 let html="";
-q.options.forEach((opt,i)=>{
-html+=`<button class="option" onclick="selectAnswer(${i})">${opt}</button>`;
+q.options.forEach((o,idx)=>{
+html+=`<button class="option" onclick="ans(${idx})">${o}</button>`;
 });
-
 document.getElementById("options").innerHTML=html;
 document.getElementById("feedbackArea").style.display="none";
 
 startTimer();
 }
 
-// ===== 倒數 =====
 function startTimer(){
-clearInterval(timer);
-timeLeft=10;
-
+clearInterval(timer);t=10;
 timer=setInterval(()=>{
-document.getElementById("timer").innerText=`⏳ ${timeLeft}s`;
-timeLeft--;
-if(timeLeft<0){clearInterval(timer);nextQuestion();}
+document.getElementById("timer").innerText="⏳ "+t;
+t--;
+if(t<0){clearInterval(timer);next();}
 },1000);
 }
 
-// ===== 作答 =====
-function selectAnswer(i){
+function ans(idx){
 if(answered)return;
 answered=true;
 clearInterval(timer);
 
-let q=quizSet[current];
+let q=quiz[i];
 let btns=document.querySelectorAll(".option");
 
-btns.forEach((b,idx)=>{
-if(idx===q.a)b.classList.add("correct");
-if(idx===i&&idx!==q.a)b.classList.add("wrong");
+btns.forEach((b,id)=>{
+if(id===q.a)b.classList.add("correct");
+if(id===idx&&id!==q.a)b.classList.add("wrong");
 b.disabled=true;
 });
 
 let msg="";
-if(i===q.a){
+if(idx===q.a){
 score++;
-const praise=["答對！","正確！","很好！","命中重點！"];
+const praise=["🧠 有第六感！","🔥 很會判斷！","😎 風險抓到了！","💯 可以！"];
 msg=praise[Math.floor(Math.random()*praise.length)];
 }else{
 msg="😆 "+q.roast;
 }
 
-showFeedback(msg,q.memory);
-
-setTimeout(nextQuestion,2000);
-}
-
-// ===== 顯示 =====
-function showFeedback(msg,memory){
 document.getElementById("feedbackArea").style.display="block";
 document.getElementById("feedback").innerText=msg;
-document.getElementById("memory").innerText="🧠 "+memory;
+document.getElementById("memory").innerText="🧠 "+q.memory;
+
+setTimeout(next,2000);
 }
 
-// ===== 下一題 =====
-function nextQuestion(){
-current++;
-if(current<5){showQuestion();}
-else{showResult();}
+function next(){
+i++;
+if(i<5)showQ();
+else result();
 }
 
-// ===== 結果 =====
-function showResult(){
+function result(){
 document.getElementById("quizPage").style.display="none";
 document.getElementById("resultPage").style.display="block";
 
-let msg="";
-if(score===5)msg="🏆 風險雷達王";
-else if(score>=4)msg="🔥 高手";
-else if(score>=3)msg="😏 還不錯";
-else if(score>=2)msg="⚠️ 要小心";
-else msg="🚨 高風險";
+let title="",comment="";
 
-document.getElementById("result").innerText=`${msg} (${score}/5)`;
+if(score===5){
+title="🏆 金融犯罪雷達王";
+comment="詐騙看到你都會繞路走";
+}else if(score>=4){
+title="🔥 風險高手";
+comment="已具備不錯判斷力";
+}else if(score>=3){
+title="😏 還行";
+comment="偶爾會被套路";
+}else if(score>=2){
+title="⚠️ 有點危險";
+comment="詐騙可能會找上你";
+}else{
+title="🚨 高風險";
+comment="建議立刻補課";
+}
+
+document.getElementById("result").innerText=`${title} (${score}/5)`;
+document.getElementById("finalComment").innerText=comment;
 }
 </script>
 
