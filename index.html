@@ -3,19 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>金融犯罪防制快問快答</title>
+<title>金融犯罪防制測驗</title>
 
 <style>
-body { font-family: Arial; background:#f5f7fb; text-align:center; }
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#eef2ff,#f8fafc);
+  text-align:center;
+}
+
 .container { max-width:750px; margin:auto; padding:20px; }
-.card { background:white; padding:22px; border-radius:14px; margin-top:20px; }
-button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointer; }
-.option { width:100%; background:#eef2ff; }
-.correct { background:#d1fae5 !important; }
-.wrong { background:#fee2e2 !important; }
-#timer { font-weight:bold; }
-.category { color:#6b7280; }
-.memory { color:#2563eb; font-weight:bold; }
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-top:20px;
+  animation: fadeIn 0.6s;
+}
+
+button {
+  padding:12px;
+  margin:8px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.option {
+  width:100%;
+  background:#eef2ff;
+}
+
+.option:hover {
+  transform:scale(1.02);
+}
+
+.correct {
+  background:#bbf7d0 !important;
+  animation: bounce 0.5s;
+}
+
+.wrong {
+  background:#fecaca !important;
+  animation: shake 0.4s;
+}
+
+/* 倒數動畫 */
+#timer {
+  font-weight:bold;
+  font-size:20px;
+}
+
+.danger {
+  color:red;
+  animation: blink 0.6s infinite;
+}
+
+/* 動畫 */
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1;}
+}
+
+@keyframes shake {
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+
+@keyframes bounce {
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
+
+@keyframes blink {
+  50%{opacity:0;}
+}
+
+#result {
+  font-size:30px;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -23,23 +96,23 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 
 <div class="container">
 
-<h1>金融犯罪防制判斷測驗</h1>
+<h1>金融犯罪判斷挑戰</h1>
 
 <div class="card" id="startPage">
-<p>隨機5題｜測試你的風險判斷能力</p>
-<button onclick="startQuiz()">開始測驗</button>
+<p>隨機5題｜看看你有沒有風險第六感 😏</p>
+<button onclick="startQuiz()">開始挑戰</button>
 </div>
 
 <div class="card" id="quizPage" style="display:none;">
 <h3 id="qNo"></h3>
-<h4 class="category" id="category"></h4>
+<h4 id="category"></h4>
 <h2 id="question"></h2>
 <div id="options"></div>
 <p id="timer"></p>
 
 <div id="feedbackArea" style="display:none;">
 <p id="feedback"></p>
-<p class="memory" id="memory"></p>
+<p id="memory"></p>
 </div>
 </div>
 
@@ -53,68 +126,32 @@ button { padding:12px; margin:8px; border:none; border-radius:8px; cursor:pointe
 
 <script>
 
-// ===== 專業題庫 =====
 const questionBank = [
-
-{cat:"ABC",q:"廠商提供顧問費並表示不影響決策，是否可接受？",
-options:["可以，只要保持客觀","市場常見做法","不可以，可能構成不當利益","金額合理即可"],
+{cat:"ABC",q:"供應商提供顧問費加速流程？",
+options:["可以","市場常見","不可以","看金額"],
 a:2,
-memory:"是否產生影響決策的誘因是關鍵",
-roast:"當對方說不影響時，通常已經在影響了。"},
-
-{cat:"ABC",q:"供應商提供全額旅費參加研討會，應如何處理？",
-options:["可接受","低調參加","原則拒絕，例外須核准","事後補申請"],
+memory:"影響決策＝風險",
+roast:"這不是顧問費，是快捷鍵"},
+{cat:"COI",q:"朋友公司投標需揭露？",
+options:["不用","看情況","需要","不用理"],
 a:2,
-memory:"外部招待原則禁止",
-roast:"先去再說，通常就變成問題。"},
-
-{cat:"COI",q:"朋友公司參與投標但你無決策權，需揭露嗎？",
-options:["不用","保持客觀即可","需要揭露","看金額"],
+memory:"可能影響就要揭露",
+roast:"太熟通常就出事"},
+{cat:"Fraud",q:"一人收款+對帳？",
+options:["效率","沒事","風險","不影響"],
 a:2,
-memory:"看是否可能影響",
-roast:"你覺得沒影響，不代表別人也這樣看。"},
-
-{cat:"COI",q:"同仁兼任外部顧問且業務重疊，最大風險？",
-options:["時間問題","形象問題","利益衝突及資訊濫用","無影響"],
+memory:"職務分工很重要",
+roast:"舞弊會謝謝你"},
+{cat:"WB",q:"檢舉最重要？",
+options:["匿名","獎金","防報復","主管"],
 a:2,
-memory:"雙重角色＝高風險",
-roast:"角色越多，風險越多。"},
-
-{cat:"Fraud",q:"一人同時負責收款與對帳，需要考量什麼？",
-options:["效率高","節省成本","舞弊風險增加","沒影響"],
+memory:"沒保護沒人檢舉",
+roast:"制度會長灰塵"},
+{cat:"Fraud",q:"異常交易？",
+options:["等","忽略","通報","處理"],
 a:2,
-memory:"職務分工是核心控制",
-roast:"一人包辦，問題也會包辦。"},
-
-{cat:"Fraud",q:"同仁長期未休假掌握關鍵流程，代表？",
-options:["認真","正常","潛在風險","績效好"],
-a:2,
-memory:"強制休假是控制機制",
-roast:"太完美反而需要注意。"},
-
-{cat:"Fraud",q:"發現異常交易但未確認，應？",
-options:["等確認","自行調查","先通報","忽略"],
-a:2,
-memory:"通報是責任",
-roast:"你不是偵查隊。"},
-
-{cat:"WB",q:"員工不願檢舉主因？",
-options:["沒獎金","流程複雜","怕被報復","不知道"],
-a:2,
-memory:"反報復最重要",
-roast:"沒有保護，就沒有檢舉。"},
-
-{cat:"WB",q:"證據不足是否通報？",
-options:["不用","等完整","應通報","看情況"],
-a:2,
-memory:"通報是合理懷疑",
-roast:"等證據通常太晚。"},
-
-{cat:"ABC",q:"提供費用加速流程但未明說條件，應？",
-options:["可以","服務費","不可以","看金額"],
-a:2,
-memory:"是否產生誘因是關鍵",
-roast:"沒講條件，不代表沒有條件。"}
+memory:"通報優先",
+roast:"拖會變更嚴重"}
 ];
 
 // ===== 隨機 =====
@@ -124,7 +161,6 @@ return [...arr].sort(()=>Math.random()-0.5).slice(0,n);
 
 let quiz=[],i=0,score=0,timer,t=10,answered=false;
 
-// ===== 開始 =====
 function startQuiz(){
 quiz=getRandom(questionBank,5);
 i=0;score=0;
@@ -133,7 +169,6 @@ document.getElementById("quizPage").style.display="block";
 showQ();
 }
 
-// ===== 題目 =====
 function showQ(){
 answered=false;
 let q=quiz[i];
@@ -152,17 +187,29 @@ document.getElementById("feedbackArea").style.display="none";
 startTimer();
 }
 
-// ===== 倒數 =====
 function startTimer(){
-clearInterval(timer);t=10;
+clearInterval(timer);
+t=10;
+
 timer=setInterval(()=>{
-document.getElementById("timer").innerText="⏳ "+t;
+let timerEl=document.getElementById("timer");
+timerEl.innerText="⏳ "+t;
+
+if(t<=3){
+timerEl.classList.add("danger");
+}else{
+timerEl.classList.remove("danger");
+}
+
 t--;
-if(t<0){clearInterval(timer);next();}
+
+if(t<0){
+clearInterval(timer);
+next();
+}
 },1000);
 }
 
-// ===== 作答 =====
 function ans(idx){
 if(answered)return;
 answered=true;
@@ -180,10 +227,10 @@ b.disabled=true;
 let msg="";
 if(idx===q.a){
 score++;
-const praise=["判斷正確","抓到重點","風險意識良好"];
+const praise=["🔥 太強了","😎 你有第六感","💯 完全命中"];
 msg=praise[Math.floor(Math.random()*praise.length)];
 }else{
-msg="⚠️ "+q.roast;
+msg="😆 "+q.roast;
 }
 
 document.getElementById("feedbackArea").style.display="block";
@@ -193,14 +240,12 @@ document.getElementById("memory").innerText="🧠 "+q.memory;
 setTimeout(next,2000);
 }
 
-// ===== 下一題 =====
 function next(){
 i++;
 if(i<5)showQ();
 else result();
 }
 
-// ===== 結果 =====
 function result(){
 document.getElementById("quizPage").style.display="none";
 document.getElementById("resultPage").style.display="block";
@@ -208,25 +253,26 @@ document.getElementById("resultPage").style.display="block";
 let title="",comment="";
 
 if(score===5){
-title="🏆 高風險辨識能力";
-comment="具備良好判斷能力";
+title="🏆 神級風險雷達";
+comment="詐騙看到你會繞路";
 }else if(score>=4){
-title="🔥 良好";
-comment="大致能辨識風險";
+title="🔥 高手";
+comment="你很難被騙";
 }else if(score>=3){
-title="😏 尚可";
-comment="部分情境仍需注意";
+title="😏 還行";
+comment="偶爾會被套路";
 }else if(score>=2){
-title="⚠️ 偏弱";
-comment="建議加強風險觀念";
+title="⚠️ 小心";
+comment="風險在靠近你";
 }else{
-title="🚨 高風險";
-comment="需立即補強";
+title="🚨 危險";
+comment="詐騙最愛你這種";
 }
 
 document.getElementById("result").innerText=`${title} (${score}/5)`;
 document.getElementById("comment").innerText=comment;
 }
+
 </script>
 
 </body>
