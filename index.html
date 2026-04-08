@@ -269,11 +269,27 @@ document.getElementById("quizPage").style.display="none";
 document.getElementById("resultPage").style.display="block";
 
 let title="",comment="";
-if(score===5){title="🏆 風險雷達王"; comment="你很難被騙";}
-else if(score>=4){title="🔥 高手"; comment="判斷能力良好";}
-else if(score>=3){title="😏 尚可"; comment="有些情境需注意";}
-else if(score>=2){title="⚠️ 偏弱"; comment="建議加強";}
-else{title="🚨 高風險"; comment="詐騙可能會找上你";}
+
+if(score===5){
+title="🏆 金融犯罪終極雷達";
+comment="詐騙集團看到你，會默默換下一個目標。你不是防線，你是結界。";
+}
+else if(score===4){
+title="🔥 風險辨識高手";
+comment="大部分情境都騙不了你，但還是有一題差點讓你心動一下😏";
+}
+else if(score===3){
+title="😏 有潛力但有破口";
+comment="你已經有概念，但某些情境還是可能被『合理化』帶走。";
+}
+else if(score===2){
+title="⚠️ 風險有點靠近你";
+comment="有些情境你會猶豫，而詐騙最喜歡的就是這種時候。";
+}
+else{
+title="🚨 高風險族群";
+comment="如果這是現實世界，你可能已經被列入詐騙集團的VIP名單了。";
+}
 
 document.getElementById("result").innerText=`${title} (${score}/5)`;
 document.getElementById("comment").innerText=comment;
