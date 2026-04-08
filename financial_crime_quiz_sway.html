@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>金融犯罪防制快問快答</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#1e293b;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --accent:#2563eb;
+      --accent2:#7c3aed;
+      --warning:#ea580c;
+      --shadow:0 20px 50px rgba(15,23,42,.25);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+      color:#fff;
+      background:
+        radial-gradient(circle at top left, rgba(124,58,237,.35), transparent 28%),
+        radial-gradient(circle at top right, rgba(37,99,235,.28), transparent 25%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .floating{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .bubble{
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      animation: floatUp linear infinite;
+      bottom:-120px;
+    }
+
+    @keyframes floatUp{
+      from{ transform:translateY(0) scale(1); opacity:0; }
+      10%{ opacity:1; }
+      to{ transform:translateY(-120vh) scale(1.2); opacity:0; }
+    }
+
+    .container{
+      width:min(980px, 92vw);
+      margin:32px auto;
+      padding:12px;
+      position:relative;
+      z-index:2;
+    }
+
+    .hero, .card{
+      background:rgba(255,255,255,.96);
+      color:var(--text);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero{
+      padding:32px 28px;
+      text-align:center;
+      animation: popIn .6s ease;
+    }
+
+    .hero h1{
+      margin:0 0 12px;
+      font-size:clamp(28px, 4vw, 44px);
+      line-height:1.15;
+    }
+
+    .hero p{
+      margin:10px auto;
+      max-width:720px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.7;
+    }
+
+    .badge-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin:18px 0 8px;
+    }
+
+    .badge{
+      padding:8px 14px;
+      border-radius:999px;
+      background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(124,58,237,.12));
+      color:#1e3a8a;
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:14px 22px;
+      font-size:16px;
+      font-weight:800;
+      transition:.22s ease;
+    }
+
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 12px 28px rgba(37,99,235,.35);
+    }
+    .btn-primary:hover{ transform:translateY(-2px) scale(1.01); }
+
+    .btn-secondary{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    .game-wrap{
+      margin-top:22px;
+      display:none;
+    }
+
+    .card{
+      padding:24px;
+      animation:slideUp .45s ease;
+    }
+
+    .topbar{
+      display:grid;
+      grid-template-columns: 1fr auto auto;
+      gap:12px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .progress-wrap{
+      width:100%;
+    }
+
+    .progress-label{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:700;
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:8px;
+    }
+
+    .progress{
+      height:14px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius:999px;
+      transition:width .4s ease;
+    }
+
+    .pill{
+      min-width:112px;
+      text-align:center;
+      padding:12px 16px;
+      border-radius:18px;
+      font-weight:800;
+      color:#fff;
+      box-shadow:0 12px 28px rgba(15,23,42,.12);
+    }
+
+    .timer{
+      background:linear-gradient(135deg, #f59e0b, var(--warning));
+    }
+
+    .score{
+      background:linear-gradient(135deg, #0ea5e9, #2563eb);
+    }
+
+    .timer.low{
+      animation:pulse 1s infinite;
+    }
+
+    .category{
+      display:inline-block;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.5px;
+      color:#5b21b6;
+      background:#f3e8ff;
+      padding:7px 12px;
+      border-radius:999px;
+      margin-bottom:12px;
+    }
+
+    .question{
+      font-size:clamp(22px, 3vw, 32px);
+      line-height:1.4;
+      margin:0 0 22px;
+      font-weight:900;
+    }
+
+    .options{
+      display:grid;
+      gap:14px;
+    }
+
+    .option{
+      position:relative;
+      text-align:left;
+      border:2px solid #dbeafe;
+      background:#fff;
+      border-radius:18px;
+      padding:16px 18px;
+      cursor:pointer;
+      transition:.18s ease;
+      font-size:17px;
+      line-height:1.5;
+      font-weight:700;
+      color:#0f172a;
+    }
+
+    .option:hover{
+      transform:translateY(-2px);
+      border-color:#93c5fd;
+      background:#f8fbff;
+    }
+
+    .option.correct{
+      background:#ecfdf5;
+      border-color:#16a34a;
+      color:#166534;
+      animation:correctFlash .45s ease;
+    }
+
+    .option.wrong{
+      background:#fef2f2;
+      border-color:#dc2626;
+      color:#991b1b;
+      animation:shake .35s ease;
+    }
+
+    .option.disabled{
+      pointer-events:none;
+      opacity:.92;
+    }
+
+    .feedback{
+      margin-top:20px;
+      padding:18px 20px;
+      border-radius:18px;
+      display:none;
+      animation:fadeIn .3s ease;
+    }
+
+    .feedback.show{ display:block; }
+
+    .feedback.correct{
+      background:#ecfdf5;
+      color:#166534;
+      border:1px solid #bbf7d0;
+    }
+
+    .feedback.wrong{
+      background:#fff7ed;
+      color:#9a3412;
+      border:1px solid #fed7aa;
+    }
+
+    .feedback h3{
+      margin:0 0 8px;
+      font-size:20px;
+    }
+
+    .feedback p{
+      margin:6px 0;
+      line-height:1.7;
+      font-size:16px;
+    }
+
+    .controls{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:20px;
+      flex-wrap:wrap;
+    }
+
+    .result{
+      display:none;
+      text-align:center;
+      padding:34px 26px;
+      animation:popIn .6s ease;
+    }
+
+    .result.show{ display:block; }
+
+    .result .emoji{
+      font-size:64px;
+      margin-bottom:10px;
+      display:block;
+      animation:bounce 1.2s infinite;
+    }
+
+    .result h2{
+      margin:0 0 10px;
+      font-size:clamp(28px, 4vw, 42px);
+    }
+
+    .result p{
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.8;
+      max-width:720px;
+      margin:10px auto;
+    }
+
+    .score-big{
+      font-size:64px;
+      font-weight:900;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      margin:10px 0;
+    }
+
+    .tips{
+      text-align:left;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      padding:20px;
+      border-radius:20px;
+      margin-top:20px;
+    }
+    .tips h3{ margin-top:0; }
+    .tips ul{
+      margin:8px 0 0 18px;
+      padding:0;
+      line-height:1.8;
+      color:#334155;
+    }
+
+    .footer-note{
+      text-align:center;
+      color:rgba(255,255,255,.8);
+      margin:20px 0 8px;
+      font-size:13px;
+    }
+
+    @keyframes slideUp{
+      from{ opacity:0; transform:translateY(18px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+    @keyframes popIn{
+      from{ opacity:0; transform:scale(.96); }
+      to{ opacity:1; transform:scale(1); }
+    }
+    @keyframes fadeIn{
+      from{ opacity:0; }
+      to{ opacity:1; }
+    }
+    @keyframes pulse{
+      0%,100%{ transform:scale(1); }
+      50%{ transform:scale(1.04); }
+    }
+    @keyframes shake{
+      0%,100%{ transform:translateX(0); }
+      25%{ transform:translateX(-6px); }
+      75%{ transform:translateX(6px); }
+    }
+    @keyframes correctFlash{
+      0%{ transform:scale(.98); }
+      60%{ transform:scale(1.02); }
+      100%{ transform:scale(1); }
+    }
+    @keyframes bounce{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-6px); }
+    }
+
+    @media (max-width: 760px){
+      .topbar{
+        grid-template-columns:1fr;
+      }
+      .pill{
+        min-width:auto;
+      }
+      .controls .btn{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating" id="floating"></div>
+
+  <div class="container">
+    <section class="hero" id="intro">
+      <h1>金融犯罪防制快問快答</h1>
+      <p>用 10 題情境式挑戰，加深同仁對 <b>反貪腐與賄賂、利益衝突、詐欺、檢舉制度</b> 的印象。每題限時 10 秒，答完立即揭曉重點，讓記憶更深刻。</p>
+      <div class="badge-row">
+        <span class="badge">10 題情境題</span>
+        <span class="badge">每題 10 秒倒數</span>
+        <span class="badge">立即揭曉答案</span>
+        <span class="badge">適合內部宣導 / Sway</span>
+      </div>
+      <button class="btn btn-primary" id="startBtn">開始挑戰</button>
+    </section>
+
+    <section class="game-wrap" id="gameWrap">
+      <div class="card" id="quizCard">
+        <div class="topbar">
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span id="qCounter">第 1 / 10 題</span>
+              <span id="topicLabel">金融犯罪防制</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div class="pill timer" id="timerBox">⏳ 10 秒</div>
+          <div class="pill score" id="scoreBox">⭐ 0 分</div>
+        </div>
+
+        <div class="category" id="category"></div>
+        <h2 class="question" id="question"></h2>
+        <div class="options" id="options"></div>
+
+        <div class="feedback" id="feedback">
+          <h3 id="feedbackTitle"></h3>
+          <p id="feedbackAnswer"></p>
+          <p id="feedbackExplanation"></p>
+          <p><b>記憶點：</b><span id="feedbackMemory"></span></p>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-secondary" id="restartBtn">重新開始</button>
+          <button class="btn btn-primary" id="nextBtn" style="display:none;">下一題</button>
+        </div>
+      </div>
+
+      <div class="card result" id="resultCard">
+        <span class="emoji" id="resultEmoji">🏆</span>
+        <h2 id="resultTitle"></h2>
+        <div class="score-big" id="finalScore"></div>
+        <p id="resultText"></p>
+
+        <div class="tips">
+          <h3>本次複習重點</h3>
+          <ul>
+            <li>有無影響公正判斷，比「是不是現金」更重要。</li>
+            <li>只要可能有利益衝突，就應主動揭露與迴避。</li>
+            <li>異常行為或一人包辦流程，都是詐欺常見警訊。</li>
+            <li>檢舉制度的核心不只在通報，更在於保護檢舉人避免報復。</li>
+          </ul>
+        </div>
+
+        <div class="controls" style="justify-content:center; margin-top:24px;">
+          <button class="btn btn-primary" id="playAgainBtn">再玩一次</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">單一 HTML 檔，可上傳至可嵌入網頁的平台使用。</div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        category: "反貪腐與賄賂",
+        topic: "不當利益辨識",
+        question: "某業務為了加速核准流程，送合作廠商高級禮盒（價值不低），但沒有明講要對方回報。這樣是否可能構成問題？",
+        options: [
+          "A. 不算，因為沒有明確對價",
+          "B. 不算，只是禮尚往來",
+          "C. 可能構成不當利益",
+          "D. 只有現金才算賄賂"
+        ],
+        answer: 2,
+        explanation: "即使沒有明講交換條件，只要可能影響公正判斷，仍可能屬於不當利益或賄賂風險。",
+        memory: "看重的是是否影響判斷，不只是有沒有收現金。"
+      },
+      {
+        category: "反貪腐與賄賂",
+        topic: "招待與贈與",
+        question: "供應商主動邀請你免費參加國外研討會，並提供機票與住宿。最適當的做法是？",
+        options: [
+          "A. 直接接受，反正是學習機會",
+          "B. 接受但不要講",
+          "C. 先依公司規定申請核准",
+          "D. 請同事替你去就好"
+        ],
+        answer: 2,
+        explanation: "外部招待屬高風險情境，應先依公司政策進行揭露、申請與核准，避免影響客觀性。",
+        memory: "免費不代表沒風險，先申請核准才安全。"
+      },
+      {
+        category: "利益衝突",
+        topic: "親友關係揭露",
+        question: "你負責評選廠商，其中一間公司是你親友經營，但你沒有最後決定權。你是否仍應申報？",
+        options: [
+          "A. 不用，因為不是最後拍板的人",
+          "B. 不用，只要自己心裡公平就好",
+          "C. 需要揭露利益關係",
+          "D. 先觀察再說"
+        ],
+        answer: 2,
+        explanation: "利益衝突管理重點在於『可能影響』，不是一定要到『已經影響』才需要揭露。",
+        memory: "有關係就先揭露，不要等出事才說。"
+      },
+      {
+        category: "利益衝突",
+        topic: "競業與資訊風險",
+        question: "主管私下經營顧問公司，客戶與公司業務高度重疊。這個情境最大的風險是什麼？",
+        options: [
+          "A. 主管可能太忙",
+          "B. 只是形象問題",
+          "C. 競業與資訊濫用風險",
+          "D. 沒什麼問題"
+        ],
+        answer: 2,
+        explanation: "若外部身分與公司業務重疊，容易產生競業、忠誠義務與機密資訊使用等重大風險。",
+        memory: "雙重身分越重疊，利益衝突風險越高。"
+      },
+      {
+        category: "詐欺",
+        topic: "職務分工",
+        question: "同一業務員長期同時負責收費、登錄、核對與對帳。最大的內控風險是？",
+        options: [
+          "A. 效率太高",
+          "B. 工作太辛苦",
+          "C. 缺乏職務分工，容易形成舞弊空間",
+          "D. 沒有風險"
+        ],
+        answer: 2,
+        explanation: "一人包辦關鍵流程，會降低交叉檢核效果，增加挪用、竄改或隱匿異常的風險。",
+        memory: "一人包辦不是能幹，是高風險訊號。"
+      },
+      {
+        category: "詐欺",
+        topic: "異常警訊",
+        question: "某同仁近期生活水準突然大幅提高，但薪資與獎金並無明顯變化。這通常代表什麼？",
+        options: [
+          "A. 一定有問題",
+          "B. 完全屬於個人隱私，不需注意",
+          "C. 可能是需要留意的異常警訊",
+          "D. 值得大家效法"
+        ],
+        answer: 2,
+        explanation: "生活型態異常不等於有罪，但屬於常見 red flag，值得搭配其他資訊審慎觀察。",
+        memory: "異常不等於定罪，但看到異常不能裝沒看到。"
+      },
+      {
+        category: "檢舉制度",
+        topic: "反報復保護",
+        question: "員工發現疑似違規，但擔心檢舉後被主管刁難。檢舉制度最重要的保障是什麼？",
+        options: [
+          "A. 只要匿名就好",
+          "B. 主管口頭保證",
+          "C. 禁止報復與保護檢舉人",
+          "D. 一定要有獎金"
+        ],
+        answer: 2,
+        explanation: "若缺乏反報復保護，員工即使知道問題，也可能不敢通報，制度就失去作用。",
+        memory: "沒保護，就沒有真正的檢舉制度。"
+      },
+      {
+        category: "檢舉制度",
+        topic: "證據不足時的處理",
+        question: "你懷疑同事有不當行為，但目前證據不完整。最適當的做法是？",
+        options: [
+          "A. 等自己查清楚再說",
+          "B. 私下先警告對方",
+          "C. 依制度通報，由公司調查",
+          "D. 先假裝沒看到"
+        ],
+        answer: 2,
+        explanation: "員工的責任是善意通報可疑情況，正式調查與蒐證應由公司依程序進行。",
+        memory: "通報不是定罪，調查才是公司的責任。"
+      },
+      {
+        category: "反貪腐與賄賂",
+        topic: "錯誤文化迷思",
+        question: "『大家都這樣做』，可以成為收受好處或違反規範的正當理由嗎？",
+        options: [
+          "A. 可以，習慣就代表合理",
+          "B. 視金額大小而定",
+          "C. 不可以",
+          "D. 只要主管沒說話就可以"
+        ],
+        answer: 2,
+        explanation: "常見做法不代表正確做法，企業文化不能凌駕法規、政策與誠信原則。",
+        memory: "大家都做，不代表可以做。"
+      },
+      {
+        category: "綜合題",
+        topic: "建立防線",
+        question: "以下哪一項最能有效降低金融犯罪風險？",
+        options: [
+          "A. 只靠高壓懲罰",
+          "B. 只增加更多流程文件",
+          "C. 建立正確文化、通報機制與內控制度",
+          "D. 只看業績結果"
+        ],
+        answer: 2,
+        explanation: "真正有效的防線來自文化、制度、通報與管理並行，而不是只靠單一措施。",
+        memory: "制度＋文化＋通報，才是完整防線。"
+      }
+    ];
+
+    const startBtn = document.getElementById("startBtn");
+    const gameWrap = document.getElementById("gameWrap");
+    const intro = document.getElementById("intro");
+    const qCounter = document.getElementById("qCounter");
+    const topicLabel = document.getElementById("topicLabel");
+    const progressBar = document.getElementById("progressBar");
+    const timerBox = document.getElementById("timerBox");
+    const scoreBox = document.getElementById("scoreBox");
+    const category = document.getElementById("category");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackAnswer = document.getElementById("feedbackAnswer");
+    const feedbackExplanation = document.getElementById("feedbackExplanation");
+    const feedbackMemory = document.getElementById("feedbackMemory");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const resultCard = document.getElementById("resultCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultEmoji = document.getElementById("resultEmoji");
+    const resultTitle = document.getElementById("resultTitle");
+    const finalScore = document.getElementById("finalScore");
+    const resultText = document.getElementById("resultText");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+
+    let current = 0;
+    let score = 0;
+    let timer = null;
+    let timeLeft = 10;
+    let locked = false;
+
+    function makeBubbles(){
+      const floating = document.getElementById("floating");
+      for(let i=0;i<16;i++){
+        const b = document.createElement("div");
+        b.className = "bubble";
+        const size = Math.random()*70 + 20;
+        b.style.width = `${size}px`;
+        b.style.height = `${size}px`;
+        b.style.left = `${Math.random()*100}%`;
+        b.style.animationDuration = `${Math.random()*12 + 10}s`;
+        b.style.animationDelay = `${Math.random()*8}s`;
+        floating.appendChild(b);
+      }
+    }
+
+    function startGame(){
+      current = 0;
+      score = 0;
+      intro.style.display = "none";
+      gameWrap.style.display = "block";
+      resultCard.classList.remove("show");
+      resultCard.style.display = "none";
+      quizCard.style.display = "block";
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      locked = false;
+      feedback.className = "feedback";
+      feedback.innerHTML = `
+        <h3 id="feedbackTitle"></h3>
+        <p id="feedbackAnswer"></p>
+        <p id="feedbackExplanation"></p>
+        <p><b>記憶點：</b><span id="feedbackMemory"></span></p>
+      `;
+      nextBtn.style.display = "none";
+      const q = questions[current];
+      qCounter.textContent = `第 ${current + 1} / ${questions.length} 題`;
+      topicLabel.textContent = q.topic;
+      category.textContent = q.category;
+      questionEl.textContent = q.question;
+      progressBar.style.width = `${(current / questions.length) * 100}%`;
+      scoreBox.textContent = `⭐ ${score} 分`;
+      optionsEl.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerHTML = opt;
+        btn.addEventListener("click", () => selectAnswer(idx, btn));
+        optionsEl.appendChild(btn);
+      });
+
+      startTimer();
+    }
+
+    function startTimer(){
+      clearInterval(timer);
+      timeLeft = 10;
+      updateTimerUI();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+        if(timeLeft <= 0){
+          clearInterval(timer);
+          revealAnswer(-1);
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI(){
+      timerBox.textContent = `⏳ ${timeLeft} 秒`;
+      timerBox.classList.toggle("low", timeLeft <= 3);
+    }
+
+    function selectAnswer(idx, btn){
+      if(locked) return;
+      clearInterval(timer);
+      revealAnswer(idx);
+    }
+
+    function revealAnswer(selectedIdx){
+      if(locked) return;
+      locked = true;
+
+      const q = questions[current];
+      const optionButtons = [...document.querySelectorAll(".option")];
+      optionButtons.forEach((btn, idx) => {
+        btn.classList.add("disabled");
+        if(idx === q.answer) btn.classList.add("correct");
+        if(selectedIdx === idx && idx !== q.answer) btn.classList.add("wrong");
+      });
+
+      let isCorrect = selectedIdx === q.answer;
+      if(isCorrect) score++;
+
+      scoreBox.textContent = `⭐ ${score} 分`;
+      nextBtn.style.display = "inline-block";
+
+      feedback.classList.add("show", isCorrect ? "correct" : "wrong");
+      document.getElementById("feedbackTitle").textContent = isCorrect ? "答對了！" : (selectedIdx === -1 ? "時間到！" : "這題答錯了");
+      document.getElementById("feedbackAnswer").innerHTML = `<b>正確答案：</b> ${q.options[q.answer]}`;
+      document.getElementById("feedbackExplanation").textContent = q.explanation;
+      document.getElementById("feedbackMemory").textContent = q.memory;
+
+      progressBar.style.width = `${((current + 1) / questions.length) * 100}%`;
+    }
+
+    function nextQuestion(){
+      current++;
+      if(current < questions.length){
+        renderQuestion();
+      }else{
+        showResult();
+      }
+    }
+
+    function showResult(){
+      clearInterval(timer);
+      quizCard.style.display = "none";
+      resultCard.style.display = "block";
+      resultCard.classList.add("show");
+
+      finalScore.textContent = `${score} / ${questions.length}`;
+
+      if(score >= 9){
+        resultEmoji.textContent = "🏆";
+        resultTitle.textContent = "風險雷達高手";
+        resultText.textContent = "你對金融犯罪防制的敏感度很高，已具備良好的風險辨識能力。這類觀念若能持續轉化成日常行為與提醒，就能形成很強的第一道防線。";
+      }else if(score >= 7){
+        resultEmoji.textContent = "💡";
+        resultTitle.textContent = "觀念不錯，再強化就更完整";
+        resultText.textContent = "你已具備不錯的觀念基礎，但有些灰色地帶仍容易誤判。建議持續透過情境題與案例討論，加深印象。";
+      }else{
+        resultEmoji.textContent = "🚨";
+        resultTitle.textContent = "防制意識需要補強";
+        resultText.textContent = "有些高風險情境還不夠敏感，建議重新複習重點：利益先揭露、異常要注意、懷疑就通報、招待先申請。";
+      }
+    }
+
+    function resetGame(){
+      clearInterval(timer);
+      startGame();
+    }
+
+    startBtn.addEventListener("click", startGame);
+    nextBtn.addEventListener("click", nextQuestion);
+    restartBtn.addEventListener("click", resetGame);
+    playAgainBtn.addEventListener("click", resetGame);
+
+    makeBubbles();
+  </script>
+</body>
+</html>
