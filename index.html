@@ -14,6 +14,8 @@
     --line:#e7ebf2;
     --primary:#2563eb;
     --primary-dark:#1d4ed8;
+    --secondary:#f8fafc;
+    --secondary-border:#dbe3ee;
     --correct-bg:#ecfdf3;
     --correct-border:#86efac;
     --wrong-bg:#fff1f2;
@@ -184,6 +186,11 @@
     font-weight:800;
     font-size:17px;
     transition:.2s ease;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   }
 
   .btn-primary{
@@ -194,6 +201,17 @@
 
   .btn-primary:hover{
     transform:translateY(-1px) scale(1.01);
+  }
+
+  .btn-secondary{
+    background:var(--secondary);
+    color:#1f2a44;
+    border:1px solid var(--secondary-border);
+  }
+
+  .btn-secondary:hover{
+    transform:translateY(-1px);
+    background:#f1f5f9;
   }
 
   .question-meta{
@@ -345,11 +363,40 @@
 
   .result-comment{
     max-width:720px;
-    margin:0 auto 24px;
+    margin:0 auto 20px;
     color:#374151;
     line-height:2;
     font-size:18px;
     white-space:pre-line;
+  }
+
+  .cta-panel{
+    max-width:760px;
+    margin:18px auto 0;
+    padding:18px;
+    background:#f8fafc;
+    border:1px solid #e5edf7;
+    border-radius:22px;
+  }
+
+  .cta-title{
+    font-size:18px;
+    font-weight:900;
+    margin-bottom:8px;
+  }
+
+  .cta-text{
+    color:#5b667a;
+    line-height:1.8;
+    margin-bottom:16px;
+    font-size:15px;
+  }
+
+  .cta-actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
   }
 
   .result-footer{
@@ -420,9 +467,9 @@
       </div>
 
       <div class="intro-block">
-        <div class="intro-title">快問快答挑戰</div>
+        <div class="intro-title">5 題快答挑戰</div>
         <p class="intro-desc">
-          每次隨機抽 5 題。告訴你是「金融犯罪終結者」還是「風險盲盒開箱王」。
+          每次隨機抽 5 題。會告訴你是「金融犯罪終結者」還是「風險盲盒開箱王」。
         </p>
         <div class="legend">
         </div>
@@ -484,7 +531,19 @@
         <div class="result-score" id="finalScore">4/5</div>
         <div class="result-title" id="resultTitle">🟩《風險雷達已開啟》</div>
         <div class="result-comment" id="comment"></div>
-        <button class="btn btn-primary" onclick="location.reload()">再玩一次</button>
+
+        <div class="cta-panel">
+          <div class="cta-title">完成挑戰後，下一步</div>
+          <div class="cta-text">
+            歡迎填寫意見回饋，幫助我們優化教材；也可以回到 Sway 專刊複習完整內容。
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" id="formsLink" href="#" target="_blank" rel="noopener noreferrer">📝 填寫意見調查</a>
+            <a class="btn btn-secondary" id="swayLink" href="#" target="_blank" rel="noopener noreferrer">📘 回到 Sway 教材</a>
+            <button class="btn btn-secondary" onclick="location.reload()">🔄 再玩一次</button>
+          </div>
+        </div>
+
         <div class="footer-quote" id="finalQuote"></div>
         <div class="result-footer">不確定的時候，就是該先停一下、先問一下的時候。</div>
       </div>
@@ -494,10 +553,20 @@
 </div>
 
 <script>
+// ===== 請改成你自己的連結 =====
+const FORMS_URL = "https://forms.office.com/Pages/ResponsePage.aspx?id=XjAHcGQma065pMTVzP0VJPu2FmqdX8BIkOY7zfIYsEJURTM2RUY2UVVHRkFNMUVGUVRZOFJKSlQ2SS4u";
+const SWAY_URL = "https://sway.cloud.microsoft/0RbrGNdSFncEKVkB?ref=Link";
+
+// ===== 結果頁按鈕連結 =====
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("formsLink").href = FORMS_URL;
+  document.getElementById("swayLink").href = SWAY_URL;
+});
+
 const questionBank = [
   {
     cat:"🟠 反貪污與賄賂（ABC）",
-    q:"專案結束後的「感謝禮」\n\n專案剛結案一週，你收到廠商寄來的高價禮盒，卡片寫「感謝協助、沒有其他意思」。你心想：都結束了，應該OK吧？你最該做的是：",
+    q:"Q1｜專案結束後的「感謝禮」\n\n專案剛結案一週，你收到廠商寄來的高價禮盒，卡片寫「感謝協助、沒有其他意思」。你心想：都結束了，應該OK吧？你最該做的是：",
     options:[
       "A. 收下就好，反正不是現金",
       "B. 拿回家低調放著，別讓同事看到",
@@ -513,7 +582,7 @@ const questionBank = [
   },
   {
     cat:"🟠 反貪污與賄賂（ABC）",
-    q:"關鍵時點的餐敘\n\n你正要參與續約評估，廠商說「先吃個飯聊近況，不談條件」。同桌還有對方另一位主管，看起來很正式。你比較適當的做法是：",
+    q:"Q2｜關鍵時點的餐敘\n\n你正要參與續約評估，廠商說「先吃個飯聊近況，不談條件」。同桌還有對方另一位主管，看起來很正式。你比較適當的做法是：",
     options:[
       "A. 去吃，反正不談公事就沒事",
       "B. 婉拒或改成公開正式會議／多人參與並依規定申報",
@@ -529,7 +598,7 @@ const questionBank = [
   },
   {
     cat:"🟠 反貪污與賄賂（ABC）",
-    q:"招待升等與「順便」安排\n\n你出差拜訪合作方，對方說「都幫你安排好了」，包含升等艙、飯店升級與司機接送，並說「這只是禮遇」。你應該：",
+    q:"Q3｜招待升等與「順便」安排\n\n你出差拜訪合作方，對方說「都幫你安排好了」，包含升等艙、飯店升級與司機接送，並說「這只是禮遇」。你應該：",
     options:[
       "A. 接受，因為你沒有開口要",
       "B. 回絕超出必要的部分或改由公司支付／申報",
@@ -545,7 +614,7 @@ const questionBank = [
   },
   {
     cat:"🟠 反貪污與賄賂（ABC）",
-    q:"紅包想換工作機會\n\n你在活動場合遇到對方說想應徵你們公司，離開前塞了一個紅包：「請你幫忙把履歷往上遞一下」。最適當處置：",
+    q:"Q4｜紅包想換工作機會\n\n你在活動場合遇到對方說想應徵你們公司，離開前塞了一個紅包：「請你幫忙把履歷往上遞一下」。最適當處置：",
     options:[
       "A. 收下但不做事，當作人情",
       "B. 退回，但不需要告知公司",
@@ -561,7 +630,7 @@ const questionBank = [
   },
   {
     cat:"🟠 反貪污與賄賂（ABC）",
-    q:"｜「加速理賠」的暗示\n\n客戶或通路私下說：「這件案子能不能快一點？有表示一下感謝。」暗示可送禮／紅包。你手上確實能推動流程。你應該：",
+    q:"Q5｜「加速理賠」的暗示\n\n客戶或通路私下說：「這件案子能不能快一點？有表示一下感謝。」暗示可送禮／紅包。你手上確實能推動流程。你應該：",
     options:[
       "A. 先幫忙加速，再提醒他別送禮",
       "B. 堅持流程一致、拒絕不當表示並通報／諮詢",
@@ -577,7 +646,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"｜招募：面試對象是你伴侶的好友\n\n你參與招募面試小組，候選人是你伴侶的密友。對方能力不差，但你覺得「反正大家一起面試」。你應該：",
+    q:"Q6｜招募：面試對象是你伴侶的好友\n\n你參與招募面試小組，候選人是你伴侶的密友。對方能力不差，但你覺得「反正大家一起面試」。你應該：",
     options:[
       "A. 不用說，讓結果自然發生",
       "B. 先揭露關係，視情況回避或限制你參與評分",
@@ -593,7 +662,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"｜升遷：你要評核的人是親戚\n\n年度績效評核，你負責評核名單裡有你的親戚。你心想：我會很客觀，不會偏袒。較適當做法：",
+    q:"Q7｜升遷：你要評核的人是親戚\n\n年度績效評核，你負責評核名單裡有你的親戚。你心想：我會很客觀，不會偏袒。較適當做法：",
     options:[
       "A. 照評核流程做就好",
       "B. 先揭露，改由他人評核或你退出相關討論",
@@ -609,7 +678,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"｜供應商是主管的關係人公司，但你沒講\n\n你在採購評選中負責彙整比較，知道某供應商其實是主管的關係人公司，但你想：「主管自己知道吧？我不講也沒差。」最合理判斷是：",
+    q:"Q8｜供應商是主管的關係人公司，但你沒講\n\n你在採購評選中負責彙整比較，知道某供應商其實是主管的關係人公司，但你想：「主管自己知道吧？我不講也沒差。」最合理判斷是：",
     options:[
       "A. 不用講，免得尷尬",
       "B. 仍要透過既定機制揭露／請主管迴避（讓流程保護所有人）",
@@ -625,7 +694,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"｜兼任外部顧問／講師，還接到跟公司有往來的案子\n\n你受邀去協會當講師／顧問，對方公司剛好也是你們合作方，並提議額外顧問費。你覺得「只是專業分享」。你應該：",
+    q:"Q9｜兼任外部顧問／講師，還接到跟公司有往來的案子\n\n你受邀去協會當講師／顧問，對方公司剛好也是你們合作方，並提議額外顧問費。你覺得「只是專業分享」。你應該：",
     options:[
       "A. 接案，反正是下班時間",
       "B. 先揭露兼職與往來關係，依規定審核／避免利益衝突",
@@ -641,7 +710,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"｜你沒說話，決策方向卻被你影響了\n\n會議中有人質疑某合作方風險，你知道一些不利資訊（例如過往爭議／合作問題），但你怕被覺得有立場，就選擇不說。最後大家傾向選用該合作方。最大的風險是：",
+    q:"Q10｜你沒說話，決策方向卻被你影響了\n\n會議中有人質疑某合作方風險，你知道一些不利資訊（例如過往爭議／合作問題），但你怕被覺得有立場，就選擇不說。最後大家傾向選用該合作方。最大的風險是：",
     options:[
       "A. 你沒發言，不會有影響",
       "B. 關鍵資訊未揭露，影響決策品質與可辯護性",
@@ -657,7 +726,7 @@ const questionBank = [
   },
   {
     cat:"🔴 詐欺防制（FRAUD）",
-    q:"｜視訊會議「主管」要求立刻例外付款\n\n你在視訊會議中聽到「主管」說：今天一定要先付，不然合作會破局；請你立刻走例外付款，流程之後補。畫面有點卡、聲音也不太清楚，但對方語氣很急。你應該：",
+    q:"Q11｜視訊會議「主管」要求立刻例外付款\n\n你在視訊會議中聽到「主管」說：今天一定要先付，不然合作會破局；請你立刻走例外付款，流程之後補。畫面有點卡、聲音也不太清楚，但對方語氣很急。你應該：",
     options:[
       "A. 先付再說，免得壞事",
       "B. 先用第二管道確認（電話／Teams 另開、找秘書／同層主管核對）",
@@ -673,7 +742,7 @@ const questionBank = [
   },
   {
     cat:"🔴 詐欺防制（FRAUD）",
-    q:"｜合作多年供應商突然換收款帳戶\n\n合作多年的供應商來信：「公司整併，請改匯新帳戶」，並附上新的銀行資料。對方催你：這週必須付款。你最應該：",
+    q:"Q12｜合作多年供應商突然換收款帳戶\n\n合作多年的供應商來信：「公司整併，請改匯新帳戶」，並附上新的銀行資料。對方催你：這週必須付款。你最應該：",
     options:[
       "A. 因為合作多年可信，直接改",
       "B. 依程序做帳戶變更驗證（回撥既有聯絡窗口／銀行驗證／雙人覆核）",
@@ -689,7 +758,7 @@ const questionBank = [
   },
   {
     cat:"🔴 詐欺防制（FRAUD）",
-    q:"｜同仁代辦：我先幫你處理文件\n\n同事非常熱心說：「你很忙，我幫你把文件都弄好，你只要簽名就好。」你翻了一下覺得差不多，但你其實不清楚內容脈絡。你應該：",
+    q:"Q13｜同仁代辦：我先幫你處理文件\n\n同事非常熱心說：「你很忙，我幫你把文件都弄好，你只要簽名就好。」你翻了一下覺得差不多，但你其實不清楚內容脈絡。你應該：",
     options:[
       "A. 簽吧，同事都幫你了",
       "B. 要求補足脈絡與佐證／自己確認關鍵欄位（或請第二人覆核）",
@@ -705,7 +774,7 @@ const questionBank = [
   },
   {
     cat:"🔴 詐欺防制（FRAUD）",
-    q:"｜同仁總是很熱心幫你值班\n\n某同事常主動幫你值班、代收信、代處理付款流程，甚至說「帳密給我，我幫你快點處理」。你覺得他人很好也很有效率。你應該：",
+    q:"Q14｜同仁總是很熱心幫你值班\n\n某同事常主動幫你值班、代收信、代處理付款流程，甚至說「帳密給我，我幫你快點處理」。你覺得他人很好也很有效率。你應該：",
     options:[
       "A. 給帳密，反正他是同事",
       "B. 不共享帳密、維持職責分工，必要時請主管調整資源",
@@ -721,7 +790,7 @@ const questionBank = [
   },
   {
     cat:"🔴 詐欺防制（FRAUD）",
-    q:"｜「主管」訊息：先匯款再補流程\n\n你收到看似主管的訊息：請你立刻匯款，並說「流程之後補、我扛」。你正好很趕、也怕拖到進度。最正確作法：",
+    q:"Q15｜「主管」訊息：先匯款再補流程\n\n你收到看似主管的訊息：請你立刻匯款，並說「流程之後補、我扛」。你正好很趕、也怕拖到進度。最正確作法：",
     options:[
       "A. 有主管扛就做",
       "B. 先驗證指示真實性＋遵循付款控管（雙人覆核／回撥確認）",
@@ -737,7 +806,7 @@ const questionBank = [
   },
   {
     cat:"🟢 檢舉制度（Speak Out）",
-    q:"｜回扣藏在「價格看似合理」\n\n你發現某供應商長期得標，報價不是最低但「總能過」，而且採購承辦與廠商私下頻繁聯絡；驗收文件常出現補簽、日期不一致。你沒有直接證據是回扣。你應該：",
+    q:"Q16｜回扣藏在「價格看似合理」\n\n你發現某供應商長期得標，報價不是最低但「總能過」，而且採購承辦與廠商私下頻繁聯絡；驗收文件常出現補簽、日期不一致。你沒有直接證據是回扣。你應該：",
     options:[
       "A. 沒證據就別說，免得誤會",
       "B. 依檢舉／通報機制反映「模式與異常跡象」",
@@ -753,7 +822,7 @@ const questionBank = [
   },
   {
     cat:"🟢 檢舉制度（Speak Out）",
-    q:"｜下班前大量匯出客戶資料\n\n你看到同事下班前大量匯出客戶資料，並把報表寄到私人信箱／外部雲端。理由是「回家加班比較快」。你知道資料很敏感。你最適當行動：",
+    q:"Q17｜下班前大量匯出客戶資料\n\n你看到同事下班前大量匯出客戶資料，並把報表寄到私人信箱／外部雲端。理由是「回家加班比較快」。你知道資料很敏感。你最適當行動：",
     options:[
       "A. 同事為工作辛苦，不要管",
       "B. 立即依公司機制反映資訊安全疑慮（保留你看到的事實）",
@@ -769,7 +838,7 @@ const questionBank = [
   },
   {
     cat:"🟢 檢舉制度（Speak Out）",
-    q:"｜採購承辦與廠商「常補簽」\n\n你接手審核一些驗收文件，發現多次補簽、日期回填、附件缺漏，但承辦說：「流程太繁瑣，先過再補很正常。」而且主管似乎也默許。你應該：",
+    q:"Q18｜採購承辦與廠商「常補簽」\n\n你接手審核一些驗收文件，發現多次補簽、日期回填、附件缺漏，但承辦說：「流程太繁瑣，先過再補很正常。」而且主管似乎也默許。你應該：",
     options:[
       "A. 大家都這樣就算了",
       "B. 提出異常並走通報／升級管道（因為這是控管被繞過）",
@@ -785,7 +854,7 @@ const questionBank = [
   },
   {
     cat:"🟢 檢舉制度（Speak Out）",
-    q:"｜AML 疑慮被拖很久才爆\n\n你在工作中發現某客戶／交易型態有 AML 疑慮（來源不明資金、迴避查核、分拆交易），曾向內部提出但遲遲沒有明確處置。多年後外部事件爆出，公司被追溯檢視。你在當下更適當的作法是：",
+    q:"Q19｜AML 疑慮被拖很久才爆\n\n你在工作中發現某客戶／交易型態有 AML 疑慮（來源不明資金、迴避查核、分拆交易），曾向內部提出但遲遲沒有明確處置。多年後外部事件爆出，公司被追溯檢視。你在當下更適當的作法是：",
     options:[
       "A. 提一次就算完成任務",
       "B. 持續追蹤、留下紀錄並在必要時升級通報",
@@ -801,7 +870,7 @@ const questionBank = [
   },
   {
     cat:"🟢 檢舉制度（Speak Out）",
-    q:"｜我怕被貼標籤／被報復\n\n你想檢舉，但擔心「講了會不會被貼上愛找麻煩的標籤？」或影響日後合作。你也不確定公司是否真的會保護你。最合理的做法：",
+    q:"Q20｜我怕被貼標籤／被報復\n\n你想檢舉，但擔心「講了會不會被貼上愛找麻煩的標籤？」或影響日後合作。你也不確定公司是否真的會保護你。最合理的做法：",
     options:[
       "A. 先觀望，確定不會被發現再說",
       "B. 使用公司正式檢舉管道（匿名／保密），保留事實、讓制度保護你",
