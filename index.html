@@ -1,245 +1,1295 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>快問快答挑戰</title>
-
 <style>
-body{
-  font-family:"Segoe UI","Microsoft JhengHei";
-  background:#eef2f7;
-  margin:0;
-  padding:12px;
-}
+  :root{
+    --bg1:#eef2f7;
+    --bg2:#dfe6ef;
+    --card:#ffffff;
+    --text:#162033;
+    --muted:#6b7280;
+    --line:#e7ebf2;
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+    --secondary:#f8fafc;
+    --secondary-border:#dbe3ee;
+    --correct-bg:#ecfdf3;
+    --correct-border:#86efac;
+    --wrong-bg:#fff1f2;
+    --wrong-border:#fda4af;
+    --feedback-bg:#fff7ed;
+    --feedback-text:#9a3412;
+    --memory-bg:#eff6ff;
+    --memory-text:#1d4ed8;
+    --shadow:0 18px 45px rgba(15,23,42,.10);
+    --radius-xl:28px;
+  }
 
-/* ===== 標題 ===== */
-.title{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:20px;
-  margin-bottom:6px;
-}
+  *{box-sizing:border-box;}
 
-.title-icon{
-  font-size:20px;
-  animation:iconPop 0.5s ease;
-}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,.85), transparent 20%),
+      radial-gradient(circle at 80% 15%, rgba(255,255,255,.65), transparent 18%),
+      radial-gradient(circle at 75% 75%, rgba(255,255,255,.55), transparent 20%),
+      linear-gradient(135deg, var(--bg1), var(--bg2));
+    padding:18px 14px 24px;
+  }
 
-.title-text{
-  font-weight:900;
-  letter-spacing:1px;
-  opacity:0;
-  transform:translateY(8px);
-  animation:titleSlideIn 0.5s ease forwards;
-}
+  .wrap{ max-width:1020px; margin:0 auto; }
 
-@keyframes titleSlideIn{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
-}
+  .board{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(255,255,255,.55);
+    backdrop-filter: blur(12px);
+    border-radius:36px;
+    padding:14px;
+    box-shadow:var(--shadow);
+  }
 
-@keyframes iconPop{
-  0%{ transform:scale(0.8); opacity:0;}
-  60%{ transform:scale(1.1);}
-  100%{ transform:scale(1); opacity:1;}
-}
+  .card{
+    background:#fff;
+    border-radius:var(--radius-xl);
+    box-shadow:0 8px 28px rgba(15,23,42,.06);
+    padding:20px 22px;
+    animation:fadeUp .42s ease;
+  }
 
-/* ===== 跑道 ===== */
-.track{
-  position:relative;
-  height:70px;
-  background:#fff;
-  border-radius:40px;
-  margin:6px 0;
-  overflow:hidden;
-}
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
 
-/* 角色 */
-.runner{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  transition:left .3s linear;
-}
+  .title-group{ text-align:left; }
 
-/* 縮小角色 */
-.runner{
-  font-size:26px;
-}
+  .title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.2px;
+  }
 
-/* 起始位置 */
-.police{ left:6%; }
-.thief{ left:74%; }
+  .title-icon{
+    width:34px;
+    height:34px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:16px;
+    background:linear-gradient(135deg,#eef4ff,#f8faff);
+    box-shadow: inset 0 0 0 1px #e6ecf5;
+    animation:iconPop .5s ease;
+  }
 
-/* 動畫 */
-.danger .police{ animation:policeRun .2s infinite;}
-.danger .thief{ animation:thiefRun .14s infinite;}
 
-@keyframes policeRun{
-  0%,100%{ transform:translateY(-50%)}
-  50%{ transform:translateY(-54%)}
-}
+  .title-text{
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:1px;
+    opacity:0;
+    transform:translateY(10px);
+    animation:titleSlideIn .6s ease forwards;
+  }
 
-@keyframes thiefRun{
-  0%,100%{ transform:translateY(-50%)}
-  50%{ transform:translateY(-48%) translateX(3px)}
-}
+  .subtitle{
+    margin:8px 0 0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.7;
+  }
 
-/* 計時 */
-.timer{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:4px;
-}
+  .status-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
 
-/* 問題 */
-h2{
-  font-size:18px;
-  margin:8px 0;
-}
+  .pill{
+    min-width:108px;
+    padding:9px 12px;
+    border-radius:999px;
+    background:#f7f9fc;
+    border:1px solid #edf1f6;
+    color:#25314a;
+    font-weight:700;
+    font-size:15px;
+    text-align:center;
+  }
 
-/* 選項 */
-button{
-  padding:10px;
-  margin:6px 0;
-  width:100%;
-  font-size:15px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-}
+  .pill.small{
+    min-width:auto;
+    padding:4px 8px;
+    font-size:13px;
+  }
 
-.correct{ background:#dcfce7;}
-.wrong{ background:#fee2e2;}
+  .timer{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-width:150px;
+    padding:10px 14px !important;
+    font-weight:900;
+  }
 
+  .timer #timerText{
+    font-size:26px;
+    line-height:1;
+    letter-spacing:.3px;
+  }
+
+  .timer-light{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#cbd5e1;
+    box-shadow:0 0 0 rgba(239,68,68,0);
+    transition:.2s ease;
+    flex:0 0 auto;
+  }
+
+  .timer.danger{
+    color:#b91c1c;
+    background:#fff1f2;
+    border-color:#fecdd3;
+    animation:blink .65s infinite;
+  }
+
+  .timer.danger #timerText{
+    font-size:30px;
+  }
+
+  .timer.danger .timer-light{
+    width:24px;
+    height:24px;
+    background:#ef4444;
+    box-shadow:0 0 12px rgba(239,68,68,.95), 0 0 30px rgba(239,68,68,.72);
+    animation:alarmFlash .28s infinite;
+  }
+
+  .intro-block{ padding:24px 8px 8px; text-align:center; }
+
+  .intro-title{
+    font-size:30px;
+    font-weight:900;
+    margin:4px 0 12px;
+    letter-spacing:.5px;
+  }
+
+  .intro-desc{
+    max-width:680px;
+    margin:0 auto 18px;
+    color:var(--muted);
+    line-height:1.75;
+    font-size:16px;
+  }
+
+  .btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    border-radius:16px;
+    padding:14px 22px;
+    font-weight:800;
+    font-size:17px;
+    transition:.2s ease;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .btn-primary{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:white;
+    box-shadow:0 12px 24px rgba(37,99,235,.22);
+  }
+
+  .btn-primary:hover{ transform:translateY(-1px) scale(1.01); }
+
+  .btn-secondary{
+    background:var(--secondary);
+    color:#1f2a44;
+    border:1px solid var(--secondary-border);
+  }
+
+  .btn-secondary:hover{
+    transform:translateY(-1px);
+    background:#f1f5f9;
+  }
+
+  .question-meta{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:6px;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid var(--line);
+    color:#475569;
+    font-size:12px;
+    font-weight:700;
+  }
+
+  .progress-wrap{ margin:4px 0 10px; }
+
+  .progress-track{
+    width:100%;
+    height:8px;
+    background:#edf2f7;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#60a5fa,#2563eb);
+    border-radius:999px;
+    transition:width .35s ease;
+  }
+
+  .question{
+    font-size:24px;
+    line-height:1.42;
+    text-align:left;
+    margin:10px 0 6px;
+    font-weight:900;
+    white-space:pre-line;
+  }
+
+  .question-hint{
+    text-align:left;
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:10px;
+  }
+
+  .options{
+    display:grid;
+    gap:10px;
+  }
+
+  .option{
+    width:100%;
+    background:#fff;
+    border:1.5px solid #e8edf5;
+    border-radius:16px;
+    padding:12px 14px;
+    text-align:left;
+    line-height:1.55;
+    font-size:16px;
+    font-weight:700;
+    color:#172033;
+    box-shadow:0 2px 8px rgba(15,23,42,.02);
+    transition:.2s ease;
+  }
+
+  .option:hover{
+    transform:translateY(-1px);
+    border-color:#c9d7ee;
+    background:#fbfdff;
+  }
+
+  .option:disabled{
+    cursor:not-allowed;
+    opacity:1;
+  }
+
+  .option.correct{
+    background:var(--correct-bg) !important;
+    border-color:var(--correct-border) !important;
+    animation:bounce .42s ease;
+  }
+
+  .option.wrong{
+    background:var(--wrong-bg) !important;
+    border-color:var(--wrong-border) !important;
+    animation:shake .32s ease;
+  }
+
+  .choice-label{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:#eff6ff;
+    color:#1d4ed8;
+    font-weight:900;
+    margin-right:10px;
+    flex:0 0 auto;
+  }
+
+  .choice-line{
+    display:flex;
+    align-items:flex-start;
+  }
+
+  .feedback-area{
+    display:none;
+    margin-top:12px;
+    text-align:left;
+    animation:fadeUp .25s ease;
+  }
+
+  .feedback-box{
+    padding:12px 14px;
+    border-radius:16px;
+    background:var(--feedback-bg);
+    color:var(--feedback-text);
+    line-height:1.6;
+    font-size:15px;
+    border:1px solid #fed7aa;
+    margin-bottom:12px;
+  }
+
+  .memory-box{
+    padding:12px 14px;
+    border-radius:16px;
+    background:var(--memory-bg);
+    color:var(--memory-text);
+    line-height:1.6;
+    font-size:14px;
+    font-weight:800;
+    border:1px solid #bfdbfe;
+  }
+
+  .result-shell{
+    text-align:center;
+    padding:16px 10px 8px;
+  }
+
+  .result-score{
+    font-size:52px;
+    font-weight:900;
+    margin:8px 0 12px;
+    letter-spacing:1px;
+  }
+
+  .result-title{
+    font-size:30px;
+    font-weight:900;
+    margin:4px 0 10px;
+    line-height:1.35;
+  }
+
+  .result-comment{
+    max-width:720px;
+    margin:0 auto 14px;
+    color:#374151;
+    line-height:1.75;
+    font-size:16px;
+    white-space:pre-line;
+  }
+
+  .cta-panel{
+    max-width:760px;
+    margin:18px auto 0;
+    padding:14px;
+    background:#f8fafc;
+    border:1px solid #e5edf7;
+    border-radius:22px;
+  }
+
+  .cta-title{
+    font-size:16px;
+    font-weight:900;
+    margin-bottom:8px;
+  }
+
+  .cta-text{
+    color:#5b667a;
+    line-height:1.8;
+    margin-bottom:12px;
+    font-size:14px;
+  }
+
+  .cta-actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .result-footer{
+    color:#667085;
+    font-size:15px;
+    margin-top:16px;
+  }
+
+  .footer-quote{
+    margin-top:12px;
+    font-size:14px;
+    font-weight:800;
+    color:#344256;
+  }
+
+  .chase-wrap{
+    margin:6px 0 2px;
+    padding:4px 0 0;
+  }
+
+  .chase-track{
+    position:relative;
+    width:100%;
+    height:78px;
+    border-radius:999px;
+    background:
+      linear-gradient(180deg, #fdfefe 0%, #eef4ff 100%);
+    border:1px solid #dde6f2;
+    overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  }
+
+  .track-shadow{
+    position:absolute;
+    inset:auto 10px 8px 10px;
+    height:6px;
+    border-radius:999px;
+    background:linear-gradient(90deg, rgba(148,163,184,.1), rgba(148,163,184,.18), rgba(148,163,184,.1));
+  }
+
+  .runner{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    line-height:1;
+    transition:left .35s linear, transform .22s ease;
+    user-select:none;
+    z-index:2;
+  }
+
+  .runner.police{ left:6%; }
+  .runner.thief{ left:74%; z-index:1; }
+
+  .runner svg{
+    width:108px;
+    height:78px;
+    display:block;
+    overflow:visible;
+    filter: drop-shadow(0 8px 10px rgba(15,23,42,.12));
+  }
+
+  .finish-line{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:16px;
+    font-weight:900;
+    color:#b91c1c;
+    background:#fff1f2;
+    border:1px solid #fecdd3;
+    border-radius:999px;
+    padding:4px 8px;
+    letter-spacing:.4px;
+    z-index:3;
+  }
+
+  .speed-lines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:0;
+    transition:.2s ease;
+  }
+
+  .speed-lines span{
+    position:absolute;
+    width:20px;
+    height:3px;
+    border-radius:999px;
+    background:rgba(59,130,246,.28);
+    animation:speedLine 1s linear infinite;
+  }
+
+  .speed-lines span:nth-child(1){ left:14%; top:22px; animation-delay:0s; }
+  .speed-lines span:nth-child(2){ left:28%; top:60px; animation-delay:.2s; }
+  .speed-lines span:nth-child(3){ left:44%; top:32px; animation-delay:.45s; }
+  .speed-lines span:nth-child(4){ left:58%; top:68px; animation-delay:.65s; }
+  .speed-lines span:nth-child(5){ left:70%; top:26px; animation-delay:.85s; }
+
+  .chase-wrap.danger .speed-lines{ opacity:1; }
+
+  .chase-wrap.danger .chase-track{
+    background:linear-gradient(180deg, #fff8f5 0%, #fff1f2 100%);
+    border-color:#fbcfe8;
+    box-shadow:0 0 0 2px rgba(239,68,68,.05), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+
+  .chase-wrap.danger .runner.police{ animation:policeSprint .24s infinite; }
+  .chase-wrap.danger .runner.thief{ animation:thiefScurry .14s infinite; }
+
+  .chase-wrap.caught .runner.police{
+    left:69% !important;
+    transform:translateY(-50%) scale(1.08);
+  }
+
+  .chase-wrap.caught .runner.thief{
+    left:75% !important;
+    transform:translateY(-50%) scale(.82);
+    opacity:.55;
+  }
+
+  .chase-wrap.caught .finish-line{
+    background:#fee2e2;
+    color:#991b1b;
+    border-color:#fca5a5;
+    animation:alarmFlash .36s infinite;
+  }
+
+  .hidden{ display:none; }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  @keyframes titleSlideIn{
+    from{opacity:0; transform:translateY(12px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  @keyframes iconPop{
+    0%{ transform:scale(.8); opacity:0; }
+    60%{ transform:scale(1.1); }
+    100%{ transform:scale(1); opacity:1; }
+  }
+
+  @keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    50%{transform:translateX(6px);}
+    75%{transform:translateX(-4px);}
+    100%{transform:translateX(0);}
+  }
+
+  @keyframes bounce{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.04);}
+    100%{transform:scale(1);}
+  }
+
+  @keyframes blink{
+    50%{opacity:.35;}
+  }
+
+  @keyframes alarmFlash{
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:.28; transform:scale(1.22); }
+  }
+
+  @keyframes policeSprint{
+    0%,100%{ transform:translateY(-50%) scale(1); }
+    50%{ transform:translateY(-54%) scale(1.04); }
+  }
+
+  @keyframes thiefScurry{
+    0%,100%{ transform:translateY(-50%) translateX(0) scale(1); }
+    25%{ transform:translateY(-47%) translateX(2px) scale(1.03); }
+    50%{ transform:translateY(-52%) translateX(4px) scale(1.06); }
+    75%{ transform:translateY(-48%) translateX(2px) scale(1.03); }
+  }
+
+  @keyframes speedLine{
+    0%{ transform:translateX(0); opacity:0; }
+    20%{ opacity:.75; }
+    100%{ transform:translateX(28px); opacity:0; }
+  }
+
+  @media (max-width: 768px){
+    body{ padding:12px 8px 16px; }
+    .board{ border-radius:26px; padding:10px; }
+    .card{ padding:14px 12px; border-radius:20px; }
+    .topbar{ gap:8px; margin-bottom:8px; }
+    .title{ font-size:18px; }
+    .question{ font-size:20px; line-height:1.38; }
+    .option{ font-size:14px; padding:10px 12px; }
+    .result-score{ font-size:46px; }
+    .result-title{ font-size:28px; }
+    .pill{ min-width:auto; }
+    .timer{ min-width:124px; padding:8px 12px !important; }
+    .timer #timerText{ font-size:22px; }
+    .runner svg{ width:46px; height:46px; }
+    .chase-track{ height:64px; }
+  }
 </style>
 </head>
-
 <body>
+<div class="wrap">
+  <div class="board">
 
-<!-- 標題 -->
-<div class="title">
-  <div class="title-icon">⚡</div>
-  <div class="title-text">快問快答挑戰</div>
+    <div class="card" id="startPage">
+      <div class="topbar">
+        <div class="title-group">
+          <div class="title">
+            <div class="title-icon">🎯</div>
+            <div>檢測金融犯罪防制DNA</div>
+          </div>
+          <p class="subtitle">以情境題快速檢測你對反貪污與賄賂、利益衝突、詐欺防制與檢舉制度的風險敏感度。</p>
+        </div>
+      </div>
+
+      <div class="intro-block">
+        <div class="intro-title">快問快答挑戰</div>
+        <p class="intro-desc">
+          每次隨機抽 5 題，在規定時間內做出判斷。看看你能不能在風險出現前，成功做出正確決策。
+        </p>
+        <button class="btn btn-primary" onclick="startQuiz()">開始挑戰</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="quizPage">
+      <div class="topbar">
+        <div class="title-group">
+          <div class="title">
+            <div class="title-icon">⚡</div>
+            <div id="gameTitle" class="title-text">快問快答挑戰</div>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="pill small" id="qNo">第 1 / 5 題</div>
+          <div class="pill small" id="scoreBoard">得分 0</div>
+          <div class="pill small timer" id="timer">
+            <span class="timer-light"></span>
+            <span id="timerText">⏱ 16 秒</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chase-wrap" id="chaseWrap" aria-hidden="true">
+        <div class="chase-track">
+          <div class="track-shadow"></div>
+          <div class="speed-lines"><span></span><span></span><span></span><span></span><span></span></div>
+
+          <div class="runner police" id="policeRunner">
+            <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="policeHat" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#3766d1"/>
+                  <stop offset="100%" stop-color="#1c3f95"/>
+                </linearGradient>
+              </defs>
+
+              <ellipse cx="72" cy="132" rx="14" ry="9" fill="#1f2937" opacity=".16"/>
+              <ellipse cx="103" cy="132" rx="14" ry="9" fill="#1f2937" opacity=".16"/>
+
+              <ellipse cx="84" cy="97" rx="34" ry="28" fill="#2457c6"/>
+              <ellipse cx="84" cy="103" rx="24" ry="18" fill="#173b88"/>
+
+              <g transform="translate(38 82) rotate(-20)">
+                <ellipse cx="18" cy="12" rx="18" ry="10" fill="#2457c6"/>
+                <circle cx="5" cy="12" r="7" fill="#ffd7bf"/>
+              </g>
+              <g transform="translate(103 80) rotate(20)">
+                <ellipse cx="18" cy="12" rx="18" ry="10" fill="#2457c6"/>
+                <circle cx="35" cy="13" r="7" fill="#ffd7bf"/>
+                <circle cx="43" cy="18" r="9" fill="none" stroke="#6b7280" stroke-width="4"/>
+                <rect x="32" y="13" width="10" height="4" rx="2" fill="#6b7280"/>
+              </g>
+
+              <g transform="translate(55 112) rotate(8)">
+                <ellipse cx="15" cy="10" rx="13" ry="9" fill="#173b88"/>
+                <ellipse cx="10" cy="19" rx="12" ry="7" fill="#1f2937"/>
+              </g>
+              <g transform="translate(90 112) rotate(-18)">
+                <ellipse cx="15" cy="10" rx="13" ry="9" fill="#173b88"/>
+                <ellipse cx="10" cy="19" rx="12" ry="7" fill="#1f2937"/>
+              </g>
+
+              <circle cx="84" cy="57" r="30" fill="#ffd9c2"/>
+              <circle cx="62" cy="52" r="6" fill="#ffd9c2"/>
+              <circle cx="106" cy="52" r="6" fill="#ffd9c2"/>
+
+              <path d="M57 51 Q63 30 86 31 Q103 32 111 45 Q101 38 92 41 Q79 28 57 51 Z" fill="#4b2e22"/>
+
+              <ellipse cx="84" cy="35" rx="31" ry="10" fill="url(#policeHat)"/>
+              <path d="M56 34 Q84 12 112 34 L108 48 Q84 41 60 48 Z" fill="url(#policeHat)"/>
+              <rect x="58" y="42" width="52" height="7" rx="3.5" fill="#102a68"/>
+              <circle cx="84" cy="31" r="8" fill="#ffd34d" stroke="#e3a600" stroke-width="2"/>
+
+              <circle cx="73" cy="59" r="8.5" fill="#2b1d16"/>
+              <circle cx="95" cy="59" r="8.5" fill="#2b1d16"/>
+              <circle cx="76" cy="56" r="2.3" fill="#fff"/>
+              <circle cx="98" cy="56" r="2.3" fill="#fff"/>
+
+              <circle cx="63" cy="69" r="5" fill="#ffb4b4" opacity=".65"/>
+              <circle cx="105" cy="69" r="5" fill="#ffb4b4" opacity=".65"/>
+
+              <path d="M79 72 Q84 79 89 72" stroke="#b84e4e" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <circle cx="84" cy="67" r="2.2" fill="#b84e4e"/>
+
+              <circle cx="84" cy="90" r="3" fill="#ffd34d"/>
+              <circle cx="84" cy="101" r="3" fill="#ffd34d"/>
+
+              <circle cx="31" cy="104" r="9" fill="none" stroke="#808796" stroke-width="4"/>
+              <rect x="31" y="94" width="8" height="4" rx="2" fill="#808796"/>
+            </svg>
+          </div>
+
+          <div class="runner thief" id="thiefRunner">
+            <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <ellipse cx="84" cy="132" rx="34" ry="10" fill="#1f2937" opacity=".12"/>
+
+              <path d="M106 73 Q133 76 130 100 Q127 120 103 114 Q91 111 88 95 Q84 76 106 73 Z" fill="#8b5a2b"/>
+              <path d="M100 73 Q112 62 117 52 Q116 67 126 73 Z" fill="#9a6735"/>
+              <circle cx="108" cy="94" r="7" fill="#d7b46a"/>
+              <path d="M108 88 V100 M102 94 H114" stroke="#8b5a2b" stroke-width="2"/>
+
+              <ellipse cx="76" cy="96" rx="31" ry="25" fill="#1f2937"/>
+              <ellipse cx="76" cy="102" rx="21" ry="14" fill="#444b57"/>
+
+              <g transform="translate(48 88) rotate(-22)">
+                <ellipse cx="14" cy="10" rx="16" ry="9" fill="#1f2937"/>
+                <circle cx="2" cy="10" r="6" fill="#ffd7bf"/>
+              </g>
+              <g transform="translate(90 89) rotate(18)">
+                <ellipse cx="14" cy="10" rx="16" ry="9" fill="#1f2937"/>
+                <circle cx="27" cy="11" r="6" fill="#ffd7bf"/>
+              </g>
+
+              <g transform="translate(54 112) rotate(10)">
+                <ellipse cx="13" cy="9" rx="12" ry="8" fill="#111827"/>
+                <ellipse cx="9" cy="19" rx="11" ry="6" fill="#0f172a"/>
+              </g>
+              <g transform="translate(84 112) rotate(-18)">
+                <ellipse cx="13" cy="9" rx="12" ry="8" fill="#111827"/>
+                <ellipse cx="9" cy="19" rx="11" ry="6" fill="#0f172a"/>
+              </g>
+
+              <circle cx="76" cy="59" r="28" fill="#ffd9c2"/>
+
+              <path d="M48 50 Q76 18 104 50 L99 58 Q76 50 53 58 Z" fill="#2c2f36"/>
+              <ellipse cx="76" cy="48" rx="29" ry="9" fill="#3a3f49"/>
+
+              <path d="M52 54 Q76 41 100 54 Q98 73 76 77 Q54 73 52 54 Z" fill="#111827"/>
+
+              <circle cx="67" cy="60" r="7.8" fill="#2b1d16"/>
+              <circle cx="89" cy="60" r="7.8" fill="#2b1d16"/>
+              <circle cx="70" cy="57" r="2.1" fill="#fff"/>
+              <circle cx="92" cy="57" r="2.1" fill="#fff"/>
+
+              <circle cx="57" cy="71" r="4.5" fill="#ffb4b4" opacity=".55"/>
+              <circle cx="95" cy="71" r="4.5" fill="#ffb4b4" opacity=".55"/>
+
+              <path d="M71 76 Q76 81 81 76" stroke="#c96a6a" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+              <path d="M118 60 Q124 49 128 59 Q128 68 120 71 Q114 67 118 60 Z" fill="#7cc8ff"/>
+              <path d="M129 68 Q134 59 138 68 Q138 75 132 78 Q127 75 129 68 Z" fill="#7cc8ff"/>
+            </svg>
+          </div>
+
+          <div class="finish-line" id="finishLine">🚨</div>
+        </div>
+      </div>
+
+      <div class="question-meta">
+        <div class="badge" id="category">分類</div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <h2 class="question" id="question"></h2>
+      <div class="question-hint">選一個最貼近你直覺的答案。</div>
+      <div class="options" id="options"></div>
+
+      <div class="feedback-area" id="feedbackArea">
+        <div class="feedback-box" id="feedback"></div>
+        <div class="memory-box" id="memory"></div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="resultPage">
+      <div class="topbar">
+        <div class="title-group">
+          <div class="title">
+            <div class="title-icon">🏁</div>
+            <div>挑戰完成</div>
+          </div>
+        </div>
+        <div class="status-row">
+          <div class="pill small" id="finalQCount">第 5 / 5 題</div>
+          <div class="pill small" id="finalScoreBoard">得分 0</div>
+        </div>
+      </div>
+
+      <div class="result-shell">
+        <div class="result-score" id="finalScore">4/5</div>
+        <div class="result-title" id="resultTitle">🟩《風險雷達已開啟》</div>
+        <div class="result-comment" id="comment"></div>
+
+        <div class="cta-panel">
+          <div class="cta-title">完成挑戰後，下一步</div>
+          <div class="cta-text">
+            請填寫意見回饋，幫助我們優化教材；也可以回到教材複習完整內容。
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" id="formsLink" href="#" target="_blank" rel="noopener noreferrer">📝 填寫意見調查</a>
+            <a class="btn btn-secondary" id="swayLink" href="#" target="_blank" rel="noopener noreferrer">📘 回到教材</a>
+            <button class="btn btn-secondary" onclick="location.reload()">🔄 再玩一次</button>
+          </div>
+        </div>
+
+        <div class="footer-quote" id="finalQuote"></div>
+        <div class="result-footer">別讓風險輕易溜走，也別讓問題拖到最後才追。</div>
+      </div>
+    </div>
+
+  </div>
 </div>
-
-<!-- 計時 -->
-<div class="timer" id="timer">16</div>
-
-<!-- 跑道 -->
-<div class="track" id="track">
-
-  <div class="runner police" id="police">🚓</div>
-  <div class="runner thief" id="thief">🏃‍♂️</div>
-
-</div>
-
-<!-- 問題 -->
-<h2 id="question"></h2>
-<div id="options"></div>
 
 <script>
+const FORMS_URL = "https://forms.office.com/Pages/ResponsePage.aspx?id=XjAHcGQma065pMTVzP0VJPu2FmqdX8BIkOY7zfIYsEJURTM2RUY2UVVHRkFNMUVGUVRZOFJKSlQ2SS4u";
+const SWAY_URL = "https://sway.cloud.microsoft/0RbrGNdSFncEKVkB?ref=Link";
 
-const questions = [
-  {q:"收到廠商禮盒，你該？",options:["收下","藏起來","申報"],a:2},
-  {q:"主管急件付款？",options:["立刻付","先確認","找同事"],a:1}
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("formsLink").href = FORMS_URL;
+  document.getElementById("swayLink").href = SWAY_URL;
+});
+
+const questionBank = [
+  {
+    cat:"🟠 反貪污與賄賂（ABC）",
+    q:"Q1｜專案結束後的「感謝禮」\n\n專案剛結案一週，你收到廠商寄來的高價禮盒，卡片寫「感謝協助、沒有其他意思」。你心想：都結束了，應該OK吧？你最該做的是：",
+    options:["收下就好，反正不是現金","拿回家低調放著，別讓同事看到","依規定申報／交由公司處理或退回（留下紀錄）"],
+    a:2,
+    feedback:["不是現金≠不是風險。禮盒只是「換了皮膚的期待」。","藏起來不會消失，只會讓你未來更難解釋。","漂亮！關鍵是透明＋可稽核。"],
+    memory:"👉 專案前後的禮物，最容易變成「人情帳」。"
+  },
+  {
+    cat:"🟠 反貪污與賄賂（ABC）",
+    q:"Q2｜關鍵時點的餐敘\n\n你正要參與續約評估，廠商說「先吃個飯聊近況，不談條件」。同桌還有對方另一位主管，看起來很正式。你比較適當的做法是：",
+    options:["去吃，反正不談公事就沒事","婉拒或改成公開正式會議／多人參與並依規定申報","去吃但自己付錢就一切安全"],
+    a:1,
+    feedback:["不談條件也能談氛圍，氛圍會影響判斷。","很棒！你是在保護自己也保護團隊決策。","你付錢不代表「時點風險」消失，續約前就是敏感。"],
+    memory:"👉 敏感時點的社交＝放大鏡。"
+  },
+  {
+    cat:"🟠 反貪污與賄賂（ABC）",
+    q:"Q3｜招待升等與「順便」安排\n\n你出差拜訪合作方，對方說「都幫你安排好了」，包含升等艙、飯店升級與司機接送，並說「這只是禮遇」。你應該：",
+    options:["接受，因為你沒有開口要","回絕超出必要的部分或改由公司支付／申報","接受但之後送小禮回禮就平衡了"],
+    a:1,
+    feedback:["對方多做一步，就是要你少做一步（少做思考）。","對！必要與超額要切清楚。","回禮不是洗白，是把風險「變成雙向」。"],
+    memory:"👉 超出必要的款待，通常不是單純好意。"
+  },
+  {
+    cat:"🟠 反貪污與賄賂（ABC）",
+    q:"Q4｜紅包想換工作機會\n\n你在活動場合遇到對方說想應徵你們公司，離開前塞了一個紅包：「請你幫忙把履歷往上遞一下」。最適當處置：",
+    options:["收下但不做事，當作人情","退回，但不需要告知公司","當場婉拒退回，並依規定通報／留下紀錄（必要時請主管／HR介入）"],
+    a:2,
+    feedback:["收下不做事＝你覺得沒事，稽核覺得故事很多。","退回很好，但「沒有紀錄」會讓你一個人扛。","正確！拒收＋紀錄才是保命組合。"],
+    memory:"👉 不收不做還不夠，要「可證明」。"
+  },
+  {
+    cat:"🟠 反貪污與賄賂（ABC）",
+    q:"Q5｜「加速理賠」的暗示\n\n客戶或通路私下說：「這件案子能不能快一點？有表示一下感謝。」暗示可送禮／紅包。你手上確實能推動流程。你應該：",
+    options:["先幫忙加速，再提醒他別送禮","堅持流程一致、拒絕不當表示並通報／諮詢","讓他送到公司「公益箱」就好"],
+    a:1,
+    feedback:["你以為是在幫忙，別人會以為在「用錢買速度」。","對！公平一致＋留下紀錄才站得住。","公益箱不是洗白機，重點是交換期待。"],
+    memory:"👉 速度可以靠流程，不該靠人情。"
+  },
+  {
+    cat:"🔵 利益衝突（COI）",
+    q:"Q6｜招募：面試對象是你伴侶的好友\n\n你參與招募面試小組，候選人是你伴侶的密友。對方能力不差，但你覺得「反正大家一起面試」。你應該：",
+    options:["不用說，讓結果自然發生","先揭露關係，視情況回避或限制你參與評分","只要自己打低分就表示公平"],
+    a:1,
+    feedback:["你不說，別人就無法保護你。","漂亮！COI 的核心就是透明與避免影響。","你以為在平衡，其實是在「自己裁判」。"],
+    memory:"👉 有關係要先說，避免你變成故事主角。"
+  },
+  {
+    cat:"🔵 利益衝突（COI）",
+    q:"Q7｜升遷：你要評核的人是親戚\n\n年度績效評核，你負責評核名單裡有你的親戚。你心想：我會很客觀，不會偏袒。較適當做法：",
+    options:["照評核流程做就好","先揭露，改由他人評核或你退出相關討論","你打分、別人寫評語就可以"],
+    a:1,
+    feedback:["客觀不是你說了算，是別人看起來是否客觀。","對！避免自己在「關鍵節點」出現。","拆開做不等於沒影響，還是同一件事。"],
+    memory:"👉 COI 不是偏袒才算，是「看起來」就有風險。"
+  },
+  {
+    cat:"🔵 利益衝突（COI）",
+    q:"Q8｜供應商是主管的關係人公司，但你沒講\n\n你在採購評選中負責彙整比較，知道某供應商其實是主管的關係人公司，但你想：「主管自己知道吧？我不講也沒差。」最合理判斷是：",
+    options:["不用講，免得尷尬","仍要透過既定機制揭露／請主管迴避（讓流程保護所有人）","私下提醒主管就好，不用紀錄"],
+    a:1,
+    feedback:["尷尬只是一時，稽核尷尬是永久。","對！制度是用來保護你們的。","私下提醒＝沒有證據＝未來你最危險。"],
+    memory:"👉 關係要走制度揭露，不走耳語。"
+  },
+  {
+    cat:"🔵 利益衝突（COI）",
+    q:"Q9｜兼任外部顧問／講師，還接到跟公司有往來的案子\n\n你受邀去協會當講師／顧問，對方公司剛好也是你們合作方，並提議額外顧問費。你覺得「只是專業分享」。你應該：",
+    options:["接案，反正是下班時間","先揭露兼職與往來關係，依規定審核／避免利益衝突","接案但不要讓公司知道"],
+    a:1,
+    feedback:["下班不是免責區，關係是 24 小時有效。","正確！先讓公司與你自己都站穩。","秘密不是策略，是風險加倍器。"],
+    memory:"👉 外部角色＋業務往來＝先揭露再開始。"
+  },
+  {
+    cat:"🔵 利益衝突（COI）",
+    q:"Q10｜你沒說話，決策方向卻被你影響了\n\n會議中有人質疑某合作方風險，你知道一些不利資訊（例如過往爭議／合作問題），但你怕被覺得有立場，就選擇不說。最後大家傾向選用該合作方。最大的風險是：",
+    options:["你沒發言，不會有影響","關鍵資訊未揭露，影響決策品質與可辯護性","多數決就代表沒問題"],
+    a:1,
+    feedback:["你不說，不代表世界不知道；只是風險被延後爆。","對！COI／治理的底層是資訊完整與可辯護。","多數決不是防火牆，最多是一起冒煙。"],
+    memory:"👉 該說的資訊不說，後果會找你說。"
+  },
+  {
+    cat:"🔴 詐欺防制（FRAUD）",
+    q:"Q11｜視訊會議「主管」要求立刻例外付款\n\n你在視訊會議中聽到「主管」說：今天一定要先付，不然合作會破局；請你立刻走例外付款，流程之後補。畫面有點卡、聲音也不太清楚，但對方語氣很急。你應該：",
+    options:["先付再說，免得壞事","先用第二管道確認（電話／Teams 另開、找秘書／同層主管核對）","請同事幫你一起按，分散責任"],
+    a:1,
+    feedback:["急，是詐欺的香水味，聞起來很像「必須」。","對！越急越要驗證。","多人一起按不會變安全，只會變多人一起寫報告。"],
+    memory:"👉 例外付款＝例外風險，先驗證再動手。"
+  },
+  {
+    cat:"🔴 詐欺防制（FRAUD）",
+    q:"Q12｜合作多年供應商突然換收款帳戶\n\n合作多年的供應商來信：「公司整併，請改匯新帳戶」，並附上新的銀行資料。對方催你：這週必須付款。你最應該：",
+    options:["因為合作多年可信，直接改","依程序做帳戶變更驗證（回撥既有聯絡窗口／銀行驗證／雙人覆核）","先匯一半測試看看"],
+    a:1,
+    feedback:["詐欺最愛「老朋友」這個皮套。","正解！帳戶變更一定要用舊資料回驗。","匯一半不是測試，是把錢分批送走。"],
+    memory:"👉 帳戶異動＝必做回驗，不能只看信件。"
+  },
+  {
+    cat:"🔴 詐欺防制（FRAUD）",
+    q:"Q13｜同仁代辦：我先幫你處理文件\n\n同事非常熱心說：「你很忙，我幫你把文件都弄好，你只要簽名就好。」你翻了一下覺得差不多，但你其實不清楚內容脈絡。你應該：",
+    options:["簽吧，同事都幫你了","要求補足脈絡與佐證／自己確認關鍵欄位（或請第二人覆核）","先簽，之後再看"],
+    a:1,
+    feedback:["最危險的不是壞人，是「把你變成最後一道門」的人。","對！簽名是責任，不是手部運動。","先簽後看＝先跳下去再找救生圈。"],
+    memory:"👉 你要負責的，你要看懂。"
+  },
+  {
+    cat:"🔴 詐欺防制（FRAUD）",
+    q:"Q14｜同仁總是很熱心幫你值班\n\n某同事常主動幫你值班、代收信、代處理付款流程，甚至說「帳密給我，我幫你快點處理」。你覺得他人很好也很有效率。你應該：",
+    options:["給帳密，反正他是同事","不共享帳密、維持職責分工，必要時請主管調整資源","給一次就好，下次再說"],
+    a:1,
+    feedback:["帳密不是餅乾，不能分著吃。","對！權限就是控管。","一次就夠出事，詐欺不需要練習很多次。"],
+    memory:"👉 效率不能靠繞控管。"
+  },
+  {
+    cat:"🔴 詐欺防制（FRAUD）",
+    q:"Q15｜「主管」訊息：先匯款再補流程\n\n你收到看似主管的訊息：請你立刻匯款，並說「流程之後補、我扛」。你正好很趕、也怕拖到進度。最正確作法：",
+    options:["有主管扛就做","先驗證指示真實性＋遵循付款控管（雙人覆核／回撥確認）","先做，留個截圖就算證據"],
+    a:1,
+    feedback:["主管扛不了你的帳號紀錄。","標準動作！先確定「真主管」再談「真急」。","截圖不是防彈衣，是案發現場照片。"],
+    memory:"👉 付款前的確認，比付款後的解釋便宜。"
+  },
+  {
+    cat:"🟢 檢舉制度（Speak Out）",
+    q:"Q16｜回扣藏在「價格看似合理」\n\n你發現某供應商長期得標，報價不是最低但「總能過」，而且採購承辦與廠商私下頻繁聯絡；驗收文件常出現補簽、日期不一致。你沒有直接證據是回扣。你應該：",
+    options:["沒證據就別說，免得誤會","依檢舉／通報機制反映「模式與異常跡象」","先私下問承辦：你是不是拿回扣？"],
+    a:1,
+    feedback:["回扣最喜歡「等有證據再說」，因為你永遠等不到。","對！Speak Out 的價值是讓公司早點看見模式。","你這不是檢舉，是直接開戰，還會打草驚蛇。"],
+    memory:"👉 通報不是定罪，是讓公司啟動查核。"
+  },
+  {
+    cat:"🟢 檢舉制度（Speak Out）",
+    q:"Q17｜下班前大量匯出客戶資料\n\n你看到同事下班前大量匯出客戶資料，並把報表寄到私人信箱／外部雲端。理由是「回家加班比較快」。你知道資料很敏感。你最適當行動：",
+    options:["同事為工作辛苦，不要管","立即依公司機制反映資訊安全疑慮（保留你看到的事實）","在群組提醒大家不要這樣做"],
+    a:1,
+    feedback:["辛苦不代表可以把客戶資料帶回家「露營」。","對！你反映的是風險不是人品。","群組提醒很熱心，但也可能讓對方立刻清掉痕跡。"],
+    memory:"👉 看到資料外流跡象，先走正式通報。"
+  },
+  {
+    cat:"🟢 檢舉制度（Speak Out）",
+    q:"Q18｜採購承辦與廠商「常補簽」\n\n你接手審核一些驗收文件，發現多次補簽、日期回填、附件缺漏，但承辦說：「流程太繁瑣，先過再補很正常。」而且主管似乎也默許。你應該：",
+    options:["大家都這樣就算了","提出異常並走通報／升級管道（因為這是控管被繞過）","自己把文件補齊就好"],
+    a:1,
+    feedback:["當「正常」變成繞流程，那就是風險在上班。","對！你是在守住控管，不是刁難同事。","你補的是文件，不是風險；還可能把責任補到你身上。"],
+    memory:"👉 補簽常態化＝控管失效化。"
+  },
+  {
+    cat:"🟢 檢舉制度（Speak Out）",
+    q:"Q19｜AML 疑慮被拖很久才爆\n\n你在工作中發現某客戶／交易型態有 AML 疑慮（來源不明資金、迴避查核、分拆交易），曾向內部提出但遲遲沒有明確處置。多年後外部事件爆出，公司被追溯檢視。你在當下更適當的作法是：",
+    options:["提一次就算完成任務","持續追蹤、留下紀錄並在必要時升級通報","等主管指示再動"],
+    a:1,
+    feedback:["你提過≠事情處理過；風險不會因為你按過送出鍵就消失。","對！AML 的關鍵是可追蹤的升級紀錄。","只等指示，通常等到的是「出事通知」。"],
+    memory:"👉 提報要能追蹤，風險才會真的被處理。"
+  },
+  {
+    cat:"🟢 檢舉制度（Speak Out）",
+    q:"Q20｜我怕被貼標籤／被報復\n\n你想檢舉，但擔心「講了會不會被貼上愛找麻煩的標籤？」或影響日後合作。你也不確定公司是否真的會保護你。最合理的做法：",
+    options:["先觀望，確定不會被發現再說","使用公司正式檢舉管道（匿名／保密），保留事實、讓制度保護你","私下跟同事說，請他去檢舉"],
+    a:1,
+    feedback:["風險不會等你做好心理建設才發生。","正確！制度存在就是要讓你安全地說。","把別人推上去不是保護，是把風險「外包」。"],
+    memory:"👉 用制度說話，比用膽量硬撐更安全。"
+  }
 ];
 
-let current=0;
-let score=0;
-let time=16;
-let timer;
-let answered=false;
+function shuffleQuestionOptions(question){
+  const items = question.options.map((opt, index) => ({
+    opt,
+    feedback: question.feedback[index],
+    isCorrect: index === question.a
+  }));
 
-function start(){
-  showQ();
-  startTimer();
+  for(let i = items.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  return {
+    ...question,
+    options: items.map(item => item.opt),
+    feedback: items.map(item => item.feedback),
+    a: items.findIndex(item => item.isCorrect)
+  };
 }
 
-function showQ(){
-  answered=false;
-  let q=questions[current];
-  document.getElementById("question").innerText=q.q;
+function getRandomQuestions(arr, n){
+  return [...arr]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, n)
+    .map(q => shuffleQuestionOptions(q));
+}
 
-  let html="";
-  q.options.forEach((o,i)=>{
-    html+=`<button onclick="ans(${i})">${o}</button>`;
+function resetChaseAnimation(){
+  const chaseWrap = document.getElementById("chaseWrap");
+  const cat = document.getElementById("policeRunner");
+  const mouse = document.getElementById("thiefRunner");
+  if(!chaseWrap || !cat || !mouse) return;
+  chaseWrap.classList.remove("danger", "caught");
+  cat.style.left = "6%";
+  mouse.style.left = "74%";
+}
+
+function updateChaseAnimation(timeLeft){
+  const chaseWrap = document.getElementById("chaseWrap");
+  const police = document.getElementById("policeRunner");
+  const thief = document.getElementById("thiefRunner");
+  if(!chaseWrap || !police || !thief) return;
+
+  const totalTime = 16;
+  const progress = (totalTime - timeLeft) / totalTime;
+
+  const policeLeft = 6 + (63 * progress);
+  const thiefLeft = 74 + (8 * progress);
+
+  police.style.left = `${Math.min(policeLeft, 69)}%`;
+  thief.style.left = `${Math.min(thiefLeft, 82)}%`;
+
+  if(timeLeft <= 5 && timeLeft > 0){
+    chaseWrap.classList.add("danger");
+  } else {
+    chaseWrap.classList.remove("danger");
+  }
+
+  if(timeLeft <= 0){
+    chaseWrap.classList.add("caught");
+  }
+}
+
+let quizSet = [];
+let current = 0;
+let score = 0;
+let timer = null;
+let timeLeft = 16;
+let answered = false;
+
+function startQuiz(){
+  quizSet = getRandomQuestions(questionBank, 5);
+  current = 0;
+  score = 0;
+  document.getElementById("startPage").classList.add("hidden");
+  document.getElementById("resultPage").classList.add("hidden");
+  document.getElementById("quizPage").classList.remove("hidden");
+  showQuestion();
+}
+
+function showQuestion(){
+  answered = false;
+  const q = quizSet[current];
+
+  document.getElementById("qNo").innerText = `第 ${current + 1} / 5 題`;
+  document.getElementById("scoreBoard").innerText = `得分 ${score}`;
+  document.getElementById("category").innerText = q.cat;
+  document.getElementById("question").innerText = q.q;
+  document.getElementById("feedbackArea").style.display = "none";
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("memory").innerText = "";
+  document.getElementById("progressBar").style.width = `${(current / 5) * 100}%`;
+
+  let optionsHtml = "";
+  const labels = ["A","B","C","D"];
+
+  q.options.forEach((opt, i) => {
+    optionsHtml += `
+      <button class="option" onclick="selectAnswer(${i})">
+        <div class="choice-line">
+          <span class="choice-label">${labels[i]}</span>
+          <span>${opt}</span>
+        </div>
+      </button>
+    `;
   });
-  document.getElementById("options").innerHTML=html;
 
-  resetRun();
+  document.getElementById("options").innerHTML = optionsHtml;
+  resetChaseAnimation();
+  startTimer();
 }
 
 function startTimer(){
   clearInterval(timer);
-  time=16;
-  timer=setInterval(()=>{
-    time--;
-    document.getElementById("timer").innerText=time;
+  timeLeft = 16;
 
-    updateRun();
+  const timerEl = document.getElementById("timer");
+  const timerTextEl = document.getElementById("timerText");
 
-    if(time<=0){
-      clearInterval(timer);
-      next();
+  timerEl.classList.remove("danger");
+  timerTextEl.innerText = `⏱ ${timeLeft} 秒`;
+
+  updateChaseAnimation(timeLeft);
+
+  timer = setInterval(() => {
+    timeLeft--;
+    timerTextEl.innerText = `⏱ ${timeLeft} 秒`;
+
+    if(timeLeft <= 5 && timeLeft > 0){
+      timerEl.classList.add("danger");
+    } else {
+      timerEl.classList.remove("danger");
     }
-  },1000);
+
+    updateChaseAnimation(timeLeft);
+
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      if(!answered){
+        handleTimeout();
+      }
+    }
+  }, 1000);
 }
 
-function updateRun(){
-  let progress=(16-time)/16;
-
-  let police=6+63*progress;
-  let thief=74+8*progress;
-
-  document.getElementById("police").style.left=police+"%";
-  document.getElementById("thief").style.left=thief+"%";
-
-  if(time<=5){
-    document.getElementById("track").classList.add("danger");
-  }
-}
-
-function resetRun(){
-  document.getElementById("track").classList.remove("danger");
-  document.getElementById("police").style.left="6%";
-  document.getElementById("thief").style.left="74%";
-}
-
-function ans(i){
+function selectAnswer(idx){
   if(answered) return;
-  answered=true;
+  answered = true;
   clearInterval(timer);
 
-  let q=questions[current];
-  let btns=document.querySelectorAll("button");
+  const q = quizSet[current];
+  const buttons = document.querySelectorAll(".option");
 
-  btns.forEach((b,id)=>{
-    if(id===q.a) b.classList.add("correct");
-    if(id===i && id!==q.a) b.classList.add("wrong");
+  buttons.forEach((b, id) => {
+    if(id === q.a) b.classList.add("correct");
+    if(id === idx && id !== q.a) b.classList.add("wrong");
+    b.disabled = true;
   });
 
-  if(i===q.a) score++;
+  if(idx === q.a){
+    score++;
+    document.getElementById("scoreBoard").innerText = `得分 ${score}`;
+  }
 
-  setTimeout(next,1200);
+  showFeedback(q, idx);
+  document.getElementById("progressBar").style.width = `${((current + 1) / 5) * 100}%`;
+  setTimeout(nextQuestion, 2800);
 }
 
-function next(){
+function handleTimeout(){
+  answered = true;
+  updateChaseAnimation(0);
+
+  const q = quizSet[current];
+  const buttons = document.querySelectorAll(".option");
+  buttons.forEach((b, id) => {
+    if(id === q.a) b.classList.add("correct");
+    b.disabled = true;
+  });
+
+  const timeoutMessages = [
+    "🚨 時間到！小偷已經快跑到終點了。",
+    "👮 慢了一拍，這題被時間帶走了。",
+    "⏰ 來不及判斷，風險先往前跑了。",
+    "💨 這題猶豫太久，小偷差點溜走。"
+  ];
+
+  const randomMsg = timeoutMessages[Math.floor(Math.random() * timeoutMessages.length)];
+
+  document.getElementById("feedbackArea").style.display = "block";
+  document.getElementById("feedback").innerText = randomMsg;
+  document.getElementById("memory").innerText = q.memory;
+  document.getElementById("progressBar").style.width = `${((current + 1) / 5) * 100}%`;
+
+  setTimeout(nextQuestion, 2500);
+}
+
+function showFeedback(q, selectedIdx){
+  document.getElementById("feedbackArea").style.display = "block";
+  const prefix = selectedIdx === q.a ? "✅ " : "😆 ";
+  document.getElementById("feedback").innerText = prefix + q.feedback[selectedIdx];
+  document.getElementById("memory").innerText = q.memory;
+}
+
+function showResult(){
+  document.getElementById("quizPage").classList.add("hidden");
+  document.getElementById("resultPage").classList.remove("hidden");
+
+  document.getElementById("finalQCount").innerText = "第 5 / 5 題";
+  document.getElementById("finalScoreBoard").innerText = `得分 ${score}`;
+  document.getElementById("finalScore").innerText = `${score}/5`;
+
+  let title = "";
+  let comment = "";
+  let quote = "";
+
+  if(score <= 1){
+    title = "🟥《風險盲盒開箱王》";
+    comment = "你今天不是在答題，是在開盲盒：每一題都在賭「應該沒事吧」。\n好消息是：你願意玩，就代表你已經比很多人早一步。";
+    quote = "👉 先停一下，再動手。";
+  } else if(score === 2){
+    title = "🟧《風險邊緣人》";
+    comment = "你其實有警覺，但很容易被三個字催眠：急、熟、順。\n下次只要多做一件事：把「確認」變成本能，你就會穩很多。";
+    quote = "👉 越急越要驗、越熟越要說、越順越要查。";
+  } else if(score === 3){
+    title = "🟨《風險守門員（偶爾心軟）》";
+    comment = "大部分你都選得很漂亮，只有少數題目被「人情或效率」偷走一分。\n你已經具備風險直覺，下一步是：遇到尷尬時點，也敢把流程講出口。";
+    quote = "👉 該說的要說，該走的要走（走流程）。";
+  } else if(score === 4){
+    title = "🟩《風險雷達員》";
+    comment = "你很會抓關鍵：知道什麼時候該停、該問、該確認。\n你今天少的一分，通常不是不懂，而是情境太像日常——這才是高手難題。";
+    quote = "👉 先確認，再決定。";
+  } else {
+    title = "🟦《風險終結者（完美拆彈）》";
+    comment = "恭喜滿分！你不是在避風險，你是在讓風險沒機會出生。\n請把這份直覺帶回工作現場：你會是團隊最穩的那個人。";
+    quote = "👉 有疑慮就停、有關係就說、有例外就驗、有異常就報。";
+  }
+
+  document.getElementById("resultTitle").innerText = title;
+  document.getElementById("comment").innerText = comment;
+  document.getElementById("finalQuote").innerText = quote;
+}
+
+function nextQuestion(){
   current++;
-  if(current<questions.length){
-    showQ();
-    startTimer();
+  if(current < 5){
+    showQuestion();
   }else{
-    alert("得分："+score);
-    location.reload();
+    showResult();
   }
 }
-
-start();
-
 </script>
-
 </body>
 </html>
