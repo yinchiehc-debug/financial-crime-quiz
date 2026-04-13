@@ -94,7 +94,6 @@
     animation:iconPop .5s ease;
   }
 
-
   .title-text{
     font-size:22px;
     font-weight:900;
@@ -659,7 +658,7 @@
         <p class="intro-desc">
           每次隨機抽 5 題，在規定時間內做出判斷。看看你能不能在風險出現前，成功做出正確決策。
         </p>
-        <button class="btn btn-primary" onclick="startQuiz()">開始挑戰</button>
+        <button type="button" class="btn btn-primary" id="startBtn">開始挑戰</button>
       </div>
     </div>
 
@@ -695,13 +694,10 @@
                   <stop offset="100%" stop-color="#1c3f95"/>
                 </linearGradient>
               </defs>
-
               <ellipse cx="72" cy="132" rx="14" ry="9" fill="#1f2937" opacity=".16"/>
               <ellipse cx="103" cy="132" rx="14" ry="9" fill="#1f2937" opacity=".16"/>
-
               <ellipse cx="84" cy="97" rx="34" ry="28" fill="#2457c6"/>
               <ellipse cx="84" cy="103" rx="24" ry="18" fill="#173b88"/>
-
               <g transform="translate(38 82) rotate(-20)">
                 <ellipse cx="18" cy="12" rx="18" ry="10" fill="#2457c6"/>
                 <circle cx="5" cy="12" r="7" fill="#ffd7bf"/>
@@ -712,7 +708,6 @@
                 <circle cx="43" cy="18" r="9" fill="none" stroke="#6b7280" stroke-width="4"/>
                 <rect x="32" y="13" width="10" height="4" rx="2" fill="#6b7280"/>
               </g>
-
               <g transform="translate(55 112) rotate(8)">
                 <ellipse cx="15" cy="10" rx="13" ry="9" fill="#173b88"/>
                 <ellipse cx="10" cy="19" rx="12" ry="7" fill="#1f2937"/>
@@ -721,32 +716,24 @@
                 <ellipse cx="15" cy="10" rx="13" ry="9" fill="#173b88"/>
                 <ellipse cx="10" cy="19" rx="12" ry="7" fill="#1f2937"/>
               </g>
-
               <circle cx="84" cy="57" r="30" fill="#ffd9c2"/>
               <circle cx="62" cy="52" r="6" fill="#ffd9c2"/>
               <circle cx="106" cy="52" r="6" fill="#ffd9c2"/>
-
               <path d="M57 51 Q63 30 86 31 Q103 32 111 45 Q101 38 92 41 Q79 28 57 51 Z" fill="#4b2e22"/>
-
               <ellipse cx="84" cy="35" rx="31" ry="10" fill="url(#policeHat)"/>
               <path d="M56 34 Q84 12 112 34 L108 48 Q84 41 60 48 Z" fill="url(#policeHat)"/>
               <rect x="58" y="42" width="52" height="7" rx="3.5" fill="#102a68"/>
               <circle cx="84" cy="31" r="8" fill="#ffd34d" stroke="#e3a600" stroke-width="2"/>
-
               <circle cx="73" cy="59" r="8.5" fill="#2b1d16"/>
               <circle cx="95" cy="59" r="8.5" fill="#2b1d16"/>
               <circle cx="76" cy="56" r="2.3" fill="#fff"/>
               <circle cx="98" cy="56" r="2.3" fill="#fff"/>
-
               <circle cx="63" cy="69" r="5" fill="#ffb4b4" opacity=".65"/>
               <circle cx="105" cy="69" r="5" fill="#ffb4b4" opacity=".65"/>
-
               <path d="M79 72 Q84 79 89 72" stroke="#b84e4e" stroke-width="3" fill="none" stroke-linecap="round"/>
               <circle cx="84" cy="67" r="2.2" fill="#b84e4e"/>
-
               <circle cx="84" cy="90" r="3" fill="#ffd34d"/>
               <circle cx="84" cy="101" r="3" fill="#ffd34d"/>
-
               <circle cx="31" cy="104" r="9" fill="none" stroke="#808796" stroke-width="4"/>
               <rect x="31" y="94" width="8" height="4" rx="2" fill="#808796"/>
             </svg>
@@ -755,15 +742,12 @@
           <div class="runner thief" id="thiefRunner">
             <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <ellipse cx="84" cy="132" rx="34" ry="10" fill="#1f2937" opacity=".12"/>
-
               <path d="M106 73 Q133 76 130 100 Q127 120 103 114 Q91 111 88 95 Q84 76 106 73 Z" fill="#8b5a2b"/>
               <path d="M100 73 Q112 62 117 52 Q116 67 126 73 Z" fill="#9a6735"/>
               <circle cx="108" cy="94" r="7" fill="#d7b46a"/>
               <path d="M108 88 V100 M102 94 H114" stroke="#8b5a2b" stroke-width="2"/>
-
               <ellipse cx="76" cy="96" rx="31" ry="25" fill="#1f2937"/>
               <ellipse cx="76" cy="102" rx="21" ry="14" fill="#444b57"/>
-
               <g transform="translate(48 88) rotate(-22)">
                 <ellipse cx="14" cy="10" rx="16" ry="9" fill="#1f2937"/>
                 <circle cx="2" cy="10" r="6" fill="#ffd7bf"/>
@@ -772,7 +756,6 @@
                 <ellipse cx="14" cy="10" rx="16" ry="9" fill="#1f2937"/>
                 <circle cx="27" cy="11" r="6" fill="#ffd7bf"/>
               </g>
-
               <g transform="translate(54 112) rotate(10)">
                 <ellipse cx="13" cy="9" rx="12" ry="8" fill="#111827"/>
                 <ellipse cx="9" cy="19" rx="11" ry="6" fill="#0f172a"/>
@@ -781,24 +764,17 @@
                 <ellipse cx="13" cy="9" rx="12" ry="8" fill="#111827"/>
                 <ellipse cx="9" cy="19" rx="11" ry="6" fill="#0f172a"/>
               </g>
-
               <circle cx="76" cy="59" r="28" fill="#ffd9c2"/>
-
               <path d="M48 50 Q76 18 104 50 L99 58 Q76 50 53 58 Z" fill="#2c2f36"/>
               <ellipse cx="76" cy="48" rx="29" ry="9" fill="#3a3f49"/>
-
               <path d="M52 54 Q76 41 100 54 Q98 73 76 77 Q54 73 52 54 Z" fill="#111827"/>
-
               <circle cx="67" cy="60" r="7.8" fill="#2b1d16"/>
               <circle cx="89" cy="60" r="7.8" fill="#2b1d16"/>
               <circle cx="70" cy="57" r="2.1" fill="#fff"/>
               <circle cx="92" cy="57" r="2.1" fill="#fff"/>
-
               <circle cx="57" cy="71" r="4.5" fill="#ffb4b4" opacity=".55"/>
               <circle cx="95" cy="71" r="4.5" fill="#ffb4b4" opacity=".55"/>
-
               <path d="M71 76 Q76 81 81 76" stroke="#c96a6a" stroke-width="3" fill="none" stroke-linecap="round"/>
-
               <path d="M118 60 Q124 49 128 59 Q128 68 120 71 Q114 67 118 60 Z" fill="#7cc8ff"/>
               <path d="M129 68 Q134 59 138 68 Q138 75 132 78 Q127 75 129 68 Z" fill="#7cc8ff"/>
             </svg>
@@ -855,7 +831,7 @@
           <div class="cta-actions">
             <a class="btn btn-primary" id="formsLink" href="#" target="_blank" rel="noopener noreferrer">📝 填寫意見調查</a>
             <a class="btn btn-secondary" id="swayLink" href="#" target="_blank" rel="noopener noreferrer">📘 回到教材</a>
-            <button class="btn btn-secondary" onclick="location.reload()">🔄 再玩一次</button>
+            <button type="button" class="btn btn-secondary" id="restartBtn">🔄 再玩一次</button>
           </div>
         </div>
 
@@ -868,13 +844,10 @@
 </div>
 
 <script>
+'use strict';
+
 const FORMS_URL = "https://forms.office.com/Pages/ResponsePage.aspx?id=XjAHcGQma065pMTVzP0VJPu2FmqdX8BIkOY7zfIYsEJURTM2RUY2UVVHRkFNMUVGUVRZOFJKSlQ2SS4u";
 const SWAY_URL = "https://sway.cloud.microsoft/0RbrGNdSFncEKVkB?ref=Link";
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("formsLink").href = FORMS_URL;
-  document.getElementById("swayLink").href = SWAY_URL;
-});
 
 const questionBank = [
   {
@@ -951,8 +924,7 @@ const questionBank = [
   },
   {
     cat:"🔵 利益衝突（COI）",
-    q:"Q10｜雖然你自認公正，但未揭露關係人\n\n在採購評選中，你自認已盡力保持公正，但會議中大家屬意的廠商剛好是你的親戚。你沒有揭露這層關係，並依照一般標準進行評分。最終該廠商得標，而事後被發現該廠商與你有親屬關係。
-在這種情況下，最大的風險是：",
+    q:"Q10｜雖然你自認公正，但未揭露關係人\n\n在採購評選中，你自認已盡力保持公正，但會議中大家屬意的廠商剛好是你的親戚。你沒有揭露這層關係，並依照一般標準進行評分。最終該廠商得標，而事後被發現該廠商與你有親屬關係。\n在這種情況下，最大的風險是：",
     options:["最多只是造成同事之間的誤會，不算重大風險","未揭露關係人資訊，造成利益衝突與公平性疑慮","只要廠商表現良好，就不會被認為有偏頗"],
     a:1,
     feedback:["你覺得是誤會，別人覺得是醜聞。","對！COI／治理的底層是資訊完整與可辯護。","表現再好也救不了程序瑕疵，這不是選美比賽。"],
@@ -1040,6 +1012,13 @@ const questionBank = [
   }
 ];
 
+let quizSet = [];
+let current = 0;
+let score = 0;
+let timer = null;
+let timeLeft = 16;
+let answered = false;
+
 function shuffleQuestionOptions(question){
   const items = question.options.map((opt, index) => ({
     opt,
@@ -1069,54 +1048,49 @@ function getRandomQuestions(arr, n){
 
 function resetChaseAnimation(){
   const chaseWrap = document.getElementById("chaseWrap");
-  const cat = document.getElementById("policeRunner");
-  const mouse = document.getElementById("thiefRunner");
-  if(!chaseWrap || !cat || !mouse) return;
+  const police = document.getElementById("policeRunner");
+  const thief = document.getElementById("thiefRunner");
+  if(!chaseWrap || !police || !thief) return;
   chaseWrap.classList.remove("danger", "caught");
-  cat.style.left = "6%";
-  mouse.style.left = "74%";
+  police.style.left = "6%";
+  thief.style.left = "74%";
 }
 
-function updateChaseAnimation(timeLeft){
+function updateChaseAnimation(timeLeftValue){
   const chaseWrap = document.getElementById("chaseWrap");
   const police = document.getElementById("policeRunner");
   const thief = document.getElementById("thiefRunner");
   if(!chaseWrap || !police || !thief) return;
 
   const totalTime = 16;
-  const progress = (totalTime - timeLeft) / totalTime;
-
+  const progress = (totalTime - timeLeftValue) / totalTime;
   const policeLeft = 6 + (63 * progress);
   const thiefLeft = 74 + (8 * progress);
 
   police.style.left = `${Math.min(policeLeft, 69)}%`;
   thief.style.left = `${Math.min(thiefLeft, 82)}%`;
 
-  if(timeLeft <= 5 && timeLeft > 0){
+  if(timeLeftValue <= 5 && timeLeftValue > 0){
     chaseWrap.classList.add("danger");
   } else {
     chaseWrap.classList.remove("danger");
   }
 
-  if(timeLeft <= 0){
+  if(timeLeftValue <= 0){
     chaseWrap.classList.add("caught");
   }
 }
-
-let quizSet = [];
-let current = 0;
-let score = 0;
-let timer = null;
-let timeLeft = 16;
-let answered = false;
 
 function startQuiz(){
   quizSet = getRandomQuestions(questionBank, 5);
   current = 0;
   score = 0;
+  answered = false;
+
   document.getElementById("startPage").classList.add("hidden");
   document.getElementById("resultPage").classList.add("hidden");
   document.getElementById("quizPage").classList.remove("hidden");
+
   showQuestion();
 }
 
@@ -1138,7 +1112,7 @@ function showQuestion(){
 
   q.options.forEach((opt, i) => {
     optionsHtml += `
-      <button class="option" onclick="selectAnswer(${i})">
+      <button type="button" class="option" data-index="${i}">
         <div class="choice-line">
           <span class="choice-label">${labels[i]}</span>
           <span>${opt}</span>
@@ -1148,6 +1122,14 @@ function showQuestion(){
   });
 
   document.getElementById("options").innerHTML = optionsHtml;
+
+  document.querySelectorAll(".option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.index);
+      selectAnswer(idx);
+    });
+  });
+
   resetChaseAnimation();
   startTimer();
 }
@@ -1161,7 +1143,6 @@ function startTimer(){
 
   timerEl.classList.remove("danger");
   timerTextEl.innerText = `⏱ ${timeLeft} 秒`;
-
   updateChaseAnimation(timeLeft);
 
   timer = setInterval(() => {
@@ -1287,10 +1268,28 @@ function nextQuestion(){
   current++;
   if(current < 5){
     showQuestion();
-  }else{
+  } else {
     showResult();
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const formsLink = document.getElementById("formsLink");
+  const swayLink = document.getElementById("swayLink");
+  const startBtn = document.getElementById("startBtn");
+  const restartBtn = document.getElementById("restartBtn");
+
+  if(formsLink) formsLink.href = FORMS_URL;
+  if(swayLink) swayLink.href = SWAY_URL;
+
+  if(startBtn){
+    startBtn.addEventListener("click", startQuiz);
+  }
+
+  if(restartBtn){
+    restartBtn.addEventListener("click", () => location.reload());
+  }
+});
 </script>
 </body>
 </html>
